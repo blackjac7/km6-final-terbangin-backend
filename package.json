@@ -1,0 +1,21 @@
+{
+    "name": "@terbangin/backend",
+    "version": "1.0.0",
+    "description": "**Terbangin Backend API - Powering Your Flight Booking Experience**",
+    "main": "index.js",
+    "scripts": {
+        "dev": "npx nodemon index.js",
+        "start": "node index.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "cors": "^2.8.5",
+        "dotenv": "^16.4.5",
+        "express": "^4.19.2"
+    },
+    "devDependencies": {
+        "nodemon": "^3.1.0"
+    }
+}
