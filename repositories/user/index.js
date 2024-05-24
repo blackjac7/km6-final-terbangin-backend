@@ -5,6 +5,14 @@ exports.getUserById = async (id) => {
     return User.findByPk(id);
 }
 
+exports.getUserByEmail = async (email) => {
+    return User.findOne({where: {email}});
+}
+
+exports.getUserByPhoneNumber = async (phoneNumber) => {
+    return User.findOne({where: {phoneNumber}});
+}
+
 exports.updateUserById = async (id, payload) => {
     if (payload.picture) {
         payload.picture = await profileUtils.processProfilePicture(payload.picture);

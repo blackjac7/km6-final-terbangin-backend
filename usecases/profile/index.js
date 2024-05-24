@@ -13,6 +13,30 @@ exports.getProfileById = async (id) => {
     return data;
 }
 
+exports.getProfileByEmail = async (email) => {
+    const data = await userRepo.getUserByEmail(email);
+
+    if (!data) {
+        throw new HttpError({
+            status: 404,
+            message: `User with email ${email} does not exist!`,
+        });
+    }
+    return data;
+}
+
+exports.getProfileByPhoneNumber = async (phoneNumber) => {
+    const data = await userRepo.getUserByPhoneNumber(phoneNumber);
+
+    if (!data) {
+        throw new HttpError({
+            status: 404,
+            message: `User with phone number ${phoneNumber} does not exist!`,
+        });
+    }
+    return data;
+}
+
 exports.updateProfileById = async (id, payload) => {
     const data = await userRepo.updateUserById(id, payload);
 
