@@ -18,7 +18,7 @@ module.exports = {
       },
       airlineClass: {
         allowNull: false,
-        type: Sequelize.ENUM,
+        type: Sequelize.ENUM("ECONOMY", "BUSINESS", "FIRST_CLASS"),
       },
       isAvailable: {
         allowNull: false,
