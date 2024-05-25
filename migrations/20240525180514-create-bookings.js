@@ -1,40 +1,35 @@
 "use strict";
-
-const users = require("../models/users");
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("OTPs", {
+    await queryInterface.createTable("Bookings", {
       id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
       },
       userId: {
         allowNull: false,
         type: Sequelize.UUID,
-        references: {
-          model: { tableName: "users" },
-          key: "id",
-        },
       },
-      code: {
+      seatId: {
         allowNull: false,
-        type: Sequelize.TEXT,
+        type: Sequelize.UUID,
       },
-      expirationDate: {
+      passangerId: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.UUID,
       },
-      isUsed: {
+      ticketId: {
         allowNull: false,
-        defaultValue: false,
-        type: Sequelize.BOOLEAN,
+        type: Sequelize.UUID,
+      },
+      paymentId: {
+        allowNull: false,
+        type: Sequelize.UUID,
       },
       deletedAt: {
-        type: Sequelize.DATE,
+        type: Sequelize.TIME,
       },
       createdAt: {
         allowNull: false,
@@ -47,6 +42,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("OTPs");
+    await queryInterface.dropTable("Bookings");
   },
 };

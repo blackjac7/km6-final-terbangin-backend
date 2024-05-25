@@ -2,35 +2,41 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("users", {
+    await queryInterface.createTable("Flights", {
       id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.UUID,
       },
-      fullName: {
+      airlineId: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.UUID,
       },
-      email: {
+      duration: {
+        type: Sequelize.INTEGER,
+      },
+      startAirportId: {
         allowNull: false,
-        unique: true,
-        type: Sequelize.STRING,
+        type: Sequelize.UUID,
       },
-      phoneNumber: {
+      endAirportId: {
         allowNull: false,
-        unique: true,
-        type: Sequelize.STRING,
+        type: Sequelize.UUID,
       },
-      password: {
+      capacity: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
       },
-      picture: {
-        type: Sequelize.TEXT,
+      departureAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+      arrivalAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
       },
       deletedAt: {
-        type: Sequelize.DATE,
+        type: Sequelize.TIME,
       },
       createdAt: {
         allowNull: false,
@@ -43,6 +49,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("users");
+    await queryInterface.dropTable("Flights");
   },
 };

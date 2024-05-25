@@ -1,7 +1,9 @@
-"use strict";
-const { Model } = require("sequelize");
+'use strict';
+const {
+  Model
+} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class OTP extends Model {
+  class Otp extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -9,50 +11,16 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      OTP.hasOne(models.users, {
-        foreignKey: "userId",
-        onDelete: "CASCADE",
-      });
     }
   }
-  OTP.init(
-    {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER,
-      },
-      userId: {
-        allowNull: false,
-        type: Sequelize.UUID,
-        references: {
-          model: { tableName: "users" },
-          key: "id",
-        },
-      },
-      code: {
-        allowNull: false,
-        type: Sequelize.TEXT,
-      },
-      expirationDate: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
-      isUsed: {
-        allowNull: false,
-        defaultValue: false,
-        type: Sequelize.BOOLEAN,
-      },
-      deletedAt: {
-        type: Sequelize.DATE,
-      },
-    },
-    {
-      sequelize,
-      modelName: "OTP",
-      paranoid: true,
-    }
-  );
-  return OTP;
+  Otp.init({
+    userId: DataTypes.UUID,
+    code: DataTypes.TEXT,
+    expire: DataTypes.TIME,
+    isUsed: DataTypes.BOOLEAN
+  }, {
+    sequelize,
+    modelName: 'Otp',
+  });
+  return Otp;
 };

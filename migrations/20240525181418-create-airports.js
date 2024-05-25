@@ -1,43 +1,35 @@
 "use strict";
-
-const { ENUM } = require("sequelize");
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("payments", {
+    await queryInterface.createTable("Airports", {
       id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
-      },
-      userId: {
-        allowNull: false,
         type: Sequelize.UUID,
-        references: {
-          model: {
-            tableName: "users",
-          },
-          key: "id",
-        },
       },
-      status: {
-        allowNull: false,
-        defaultValue: "ISSUED",
-        type: Sequelize.ENUM("ISSUED", "UNPAID", "CANCELLED"),
-      },
-      method: {
+      name: {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      totalPrice: {
+      terminal: {
         allowNull: false,
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
+      },
+      city: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
+      country: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
+      continent: {
+        allowNull: false,
+        type: Sequelize.STRING,
       },
       deletedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.TIME,
       },
       createdAt: {
         allowNull: false,
@@ -50,6 +42,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("payments");
+    await queryInterface.dropTable("Airports");
   },
 };
