@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Passangers extends Model {
     /**
@@ -11,20 +9,64 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Passangers.belongsTo(models.Users, {
+        foreignKey: "userId",
+        onDelete: "CASCADE",
+      });
+      Passangers.hasOne(models.helperBookings, {
+        foreignKey: "passangerId",
+        onDelete: "CASCADE",
+      });
     }
   }
-  Passangers.init({
-    userId: DataTypes.UUID,
-    title: DataTypes.ENUM,
-    fullName: DataTypes.STRING,
-    familyName: DataTypes.STRING,
-    birthDate: DataTypes.DATE,
-    nationality: DataTypes.STRING,
-    identityId: DataTypes.STRING,
-    issuingCountry: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Passangers',
-  });
+  Passangers.init(
+    {
+      id: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.UUID,
+      },
+      userId: {
+        allowNull: false,
+        type: DataTypes.UUID,
+        references: {
+          table: "Users",
+          key: "id",
+        },
+      },
+      title: {
+        type: DataTypes.ENUM("MRS", "MR"),
+      },
+      fullName: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
+      familyName: {
+        type: DataTypes.STRING,
+      },
+      birthDate: {
+        allowNull: false,
+        type: DataTypes.DATE,
+      },
+      nationality: {
+        type: DataTypes.STRING,
+      },
+      identityId: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
+      issuingCountry: {
+        type: DataTypes.STRING,
+      },
+      deletedAt: {
+        type: DataTypes.TIME,
+      },
+    },
+    {
+      sequelize,
+      modelName: "Passangers",
+      paranoid: true,
+    }
+  );
   return Passangers;
 };

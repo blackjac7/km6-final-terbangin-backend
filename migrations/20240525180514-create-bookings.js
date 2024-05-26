@@ -12,14 +12,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.UUID,
       },
-      seatId: {
-        allowNull: false,
-        type: Sequelize.UUID,
-      },
-      passangerId: {
-        allowNull: false,
-        type: Sequelize.UUID,
-      },
       ticketId: {
         allowNull: false,
         type: Sequelize.UUID,

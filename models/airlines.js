@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Airlines extends Model {
     /**
@@ -11,19 +9,54 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Airlines.hasMany(models.Flights, {
+        foreignKey: airlineId,
+        onDelete: "CASCADE",
+      });
     }
   }
-  Airlines.init({
-    serialNumber: DataTypes.STRING,
-    name: DataTypes.STRING,
-    picture: DataTypes.TEXT,
-    classType: DataTypes.ENUM,
-    baggage: DataTypes.INTEGER,
-    cabinBaggage: DataTypes.INTEGER,
-    additionals: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Airlines',
-  });
+  Airlines.init(
+    {
+      id: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.UUID,
+      },
+      serialNumber: {
+        allowNull: false,
+        unique: true,
+        type: DataTypes.STRING,
+      },
+      name: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
+      picture: {
+        type: DataTypes.TEXT,
+      },
+      classType: {
+        type: DataTypes.ENUM("ECONOMY", "BUSINESS", "FIRST_CLASS"),
+      },
+      baggage: {
+        allowNull: "false",
+        type: DataTypes.INTEGER,
+      },
+      cabinBaggage: {
+        allowNull: "false",
+        type: DataTypes.INTEGER,
+      },
+      additionals: {
+        type: DataTypes.STRING,
+      },
+      deletedAt: {
+        type: DataTypes.TIME,
+      },
+    },
+    {
+      sequelize,
+      modelName: "Airlines",
+      paranoid: true,
+    }
+  );
   return Airlines;
 };

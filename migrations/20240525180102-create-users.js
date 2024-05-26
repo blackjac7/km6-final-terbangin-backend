@@ -26,7 +26,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      picutre: {
+      picture: {
         type: Sequelize.TEXT,
       },
       deletedAt: {

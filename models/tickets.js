@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Tickets extends Model {
     /**
@@ -11,15 +9,55 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Tickets.hasOne(models.Bookings, {
+        foreignKey: "ticketId",
+        onDelete: "CASCADE",
+      });
+      Tickets.hasOne(models.Seats, {
+        foreignKey: "ticketId",
+        onDelete: "CASCADE",
+      });
+      Tickets.belongsTo(models.Flights, {
+        foreignKey: "flightId",
+        onDelete: "CASCADE",
+      });
     }
   }
-  Tickets.init({
-    flightId: DataTypes.UUID,
-    price: DataTypes.INTEGER,
-    type: DataTypes.ENUM
-  }, {
-    sequelize,
-    modelName: 'Tickets',
-  });
+  Tickets.init(
+    {
+      id: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.UUID,
+      },
+      flightId: {
+        allowNull: false,
+        type: DataTypes.UUID,
+      },
+      price: {
+        allowNull: false,
+        type: DataTypes.INTEGER,
+      },
+      type: {
+        type: DataTypes.ENUM("BABY", "CHILD", "ADULT"),
+      },
+      deletedAt: {
+        type: DataTypes.TIME,
+      },
+      createdAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+      },
+      updatedAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+      },
+    },
+    {
+      sequelize,
+      modelName: "Tickets",
+      paranoid: true,
+    }
+  );
   return Tickets;
 };

@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Airports extends Model {
     /**
@@ -11,17 +9,52 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Airports.hasMany(models.Flight, {
+        foreignKey: "startAirportId",
+        onDelete: "CASCADE",
+      });
+      Airports.hasMany(models.Flights, {
+        foreignKey: "endAirportId",
+        onDelete: "CASCADE",
+      });
     }
   }
-  Airports.init({
-    name: DataTypes.STRING,
-    terminal: DataTypes.STRING,
-    city: DataTypes.STRING,
-    country: DataTypes.STRING,
-    continent: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Airports',
-  });
+  Airports.init(
+    {
+      id: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.UUID,
+      },
+      name: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
+      terminal: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
+      city: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
+      country: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
+      continent: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
+      deletedAt: {
+        type: DataTypes.TIME,
+      },
+    },
+    {
+      sequelize,
+      modelName: "Airports",
+      paranoid: true,
+    }
+  );
   return Airports;
 };

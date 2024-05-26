@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Otp extends Model {
     /**
@@ -11,16 +9,48 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Otp.belongsTo(models.users, {
+        foreignKey: "userId",
+      });
     }
   }
-  Otp.init({
-    userId: DataTypes.UUID,
-    code: DataTypes.TEXT,
-    expire: DataTypes.TIME,
-    isUsed: DataTypes.BOOLEAN
-  }, {
-    sequelize,
-    modelName: 'Otp',
-  });
+  Otp.init(
+    {
+      id: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.UUID,
+      },
+      userId: {
+        allowNull: false,
+        type: DataTypes.UUID,
+        references: {
+          model: "Users",
+          key: "id",
+        },
+      },
+      code: {
+        allowNull: false,
+        type: DataTypes.TEXT,
+      },
+      expire: {
+        allowNull: false,
+        type: DataTypes.TIME,
+      },
+      isUsed: {
+        allowNull: false,
+        defaultValue: false,
+        type: DataTypes.BOOLEAN,
+      },
+      deletedAt: {
+        type: DataTypes.TIME,
+      },
+    },
+    {
+      sequelize,
+      modelName: "Otp",
+      paranoid: true,
+    }
+  );
   return Otp;
 };

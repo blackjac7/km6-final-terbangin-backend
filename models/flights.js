@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Flights extends Model {
     /**
@@ -11,19 +9,67 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Flights.hasMany(models.Tickets, {
+        foreignKey: "flightId",
+        onDelete: "CASCADE",
+      });
+      Flights.belongsTo(models.Airlines, {
+        foreignKey: "airlineId",
+        onDelete: "CASCADE",
+      });
+      Flights.belongsTo(models.Airpots, {
+        foreignKey: "startAirportId",
+        onDelete: "CASCADE",
+      });
+      Flights.belongsTo(models.Airpots, {
+        foreignKey: "endAirportId",
+        onDelete: "CASCADE",
+      });
     }
   }
-  Flights.init({
-    airlineId: DataTypes.UUID,
-    duration: DataTypes.INTEGER,
-    startAirportId: DataTypes.UUID,
-    endAirportId: DataTypes.UUID,
-    capacity: DataTypes.INTEGER,
-    departureAt: DataTypes.DATE,
-    arrivalAt: DataTypes.DATE
-  }, {
-    sequelize,
-    modelName: 'Flights',
-  });
+  Flights.init(
+    {
+      id: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.UUID,
+      },
+      airlineId: {
+        allowNull: false,
+        type: DataTypes.UUID,
+      },
+      duration: {
+        type: DataTypes.INTEGER,
+      },
+      startAirportId: {
+        allowNull: false,
+        type: DataTypes.UUID,
+      },
+      endAirportId: {
+        allowNull: false,
+        type: DataTypes.UUID,
+      },
+      capacity: {
+        allowNull: false,
+        type: DataTypes.INTEGER,
+      },
+      departureAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+      },
+      arrivalAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+      },
+      deletedAt: {
+        type: DataTypes.TIME,
+      },
+    },
+    {
+      sequelize,
+      modelName: "Airlines",
+      paranoid: true,
+    }
+  );
   return Flights;
 };

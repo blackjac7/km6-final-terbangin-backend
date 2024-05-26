@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Users extends Model {
     /**
@@ -11,17 +9,65 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Users.hasOne(models.Otp, {
+        foreignKey: "userId",
+        onDelete: "CASCADE",
+      });
+      Users.hasMany(models.Notifications, {
+        foreignKey: "userId",
+        onDelete: "CASCADE",
+      });
+      Users.hasMany(models.Passangers, {
+        foreignKey: "userId",
+        onDelete: "CASCADE",
+      });
+      Users.hasMany(models.Bookings, {
+        foreignKey: "userId",
+        onDelete: "CASCADE",
+      });
+      Users.hasMany(models.Payments, {
+        foreignKey: "userId",
+        onDelete: "CASCADE",
+      });
     }
   }
-  Users.init({
-    fullName: DataTypes.STRING,
-    email: DataTypes.STRING,
-    phoneNumber: DataTypes.STRING,
-    password: DataTypes.STRING,
-    picutre: DataTypes.TEXT
-  }, {
-    sequelize,
-    modelName: 'Users',
-  });
+  Users.init(
+    {
+      id: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.UUID,
+      },
+      fullName: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
+      email: {
+        allowNull: false,
+        unique: true,
+        type: DataTypes.STRING,
+      },
+      phoneNumber: {
+        allowNull: false,
+        unique: true,
+        type: DataTypes.STRING,
+      },
+      password: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
+      picture: {
+        type: DataTypes.TEXT,
+      },
+      deletedAt: {
+        type: DataTypes.TIME,
+      },
+    },
+    {
+      sequelize,
+      modelName: "Users",
+      paranoid: true,
+    }
+  );
   return Users;
 };

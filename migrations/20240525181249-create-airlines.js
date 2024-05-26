@@ -24,9 +24,11 @@ module.exports = {
         type: Sequelize.ENUM("ECONOMY", "BUSINESS", "FIRST_CLASS"),
       },
       baggage: {
+        allowNull: "false",
         type: Sequelize.INTEGER,
       },
       cabinBaggage: {
+        allowNull: "false",
         type: Sequelize.INTEGER,
       },
       additionals: {
