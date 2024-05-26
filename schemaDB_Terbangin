@@ -169,4 +169,4 @@ Ref: "helperBooking"."seatId" < "Seat"."id"
 // revisi 26/05/2024
 // relasi booking dengan helper booking menjadi one to many
 // relasi airport dengan flight one to many
-// hapus kolom passangerId, seatId pada tabel helperBookingId pada tabel Booking
+// hapus kolom passangerId, seatId pada tabel Booking
