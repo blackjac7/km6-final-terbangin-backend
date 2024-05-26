@@ -1,0 +1,172 @@
+// daftar enum
+
+Enum TicketType {
+  BABY
+  CHILD // anak2 yg bukan bayi
+  ADULT
+}
+
+Enum PassengerTitle {
+  MR // Mr. 
+  MRS // Mrs.
+}
+
+Enum AirlineClass {
+  ECONOMY
+  BUSINESS
+  FIRST_CLASS
+}
+
+Enum PaymentStatus {
+  ISSUED
+  UNPAID
+  CANCELLED
+}
+
+// daftar table
+
+Table User {
+  id uuid [primary key]
+  fullName varchar [not null]
+  email  varchar [not null, unique]
+  phoneNumber varchar [not null, unique]
+  password varchar [not null]
+  picture text 
+}
+
+Table Flight {
+  id uuid [primary key]
+  airlineId uuid [not null]
+  duration int [not null]
+  startAirportId uuid [not null]
+  endAirportId uuid [not null]
+  capacity int [not null]
+  departureAt datetime [not null]
+  arrivalAt datetime [not null]
+}
+
+Table Ticket {
+ id uuid [primary key]
+ flightId uuid [not null]
+
+ price int [not null]
+ type TicketType [not null] // tipe tiket
+}
+
+Table Passenger {
+  id uuid [primary key]
+  userId uuid [not null]
+  title PassengerTitle [not null]
+  fullName varchar [not null]
+  familyName varchar 
+  birthDate date [not null]
+  nationality varchar
+  identityId varchar [not null]
+  issuingCountry varchar 
+  expirationDate date
+} 
+
+Table Airline {
+   id uuid [primary key]
+   serialNumber varchar [not null]
+   name varchar [not null]
+   picture text [not null] // harus not null kah?
+   classType AirlineClass [not null]
+   baggage int [not null]
+   cabinBaggage int [not null]
+   additionals varchar 
+}
+
+Table Airport {
+  id uuid [primary key]
+  name varchar [not null]
+  terminal varchar [not null]
+  city varchar [not null]
+  country varchar [not null]
+  continent varchar [not null]
+}
+
+Table Booking {
+    id uuid [primary key]
+    userId uuid [not null]
+   ticketId uuid [not null]
+    paymentId uuid [not null]
+  }
+
+Table Payment {
+  id uuid  [primary key]
+  userId uuid [not null]
+  expire time [not null]
+  status PaymentStatus [not null] // payment status
+  method varchar [not null] // payment method, valuenya dapet dari API midtrans (?)
+  totalPrice int [not null]
+}
+
+Table OTP {
+  id uuid  [primary key]
+  userId uuid [not null] // seharusnya not null (?)
+  code text [not null] // ini maksudnya kode OTP dan seharusnya not null (?)
+  expire time [not null]
+  isUsed bool [default: false]
+}
+
+Table Seat {
+  id uuid [primary key]
+  ticketId uuid [not null]
+  seatNumber int [not null]
+  airlineClass AirlineClass [not null]
+  isAvailable bool [not null, default: false]
+}
+
+Table Notification {
+  id uuid [primary key]
+  userId uuid [not null]
+  bookingId uuid [not null]
+  title text [not null]
+  message text [not null]
+}
+
+Table helperBooking {
+  id uuid []
+  passangerId uuid [not null]
+  bookingId uuid [not null]
+  seatId uuid [not null]
+}
+
+Ref: "User"."id" < "Passenger"."userId"
+
+Ref: "Payment"."id" - "Booking"."paymentId"
+
+Ref: "User"."id" < "Booking"."userId"
+
+Ref: "OTP"."userId" - "User"."id"
+
+Ref: "Flight"."startAirportId" > "Airport"."id"
+
+Ref: "Flight"."endAirportId" > "Airport"."id"
+
+Ref: "Notification"."userId" > "User"."id"
+
+Ref: "Notification"."bookingId" > "Booking"."id"
+
+Ref: "Payment"."userId" > "User"."id"
+
+Ref: "Airline"."id" < "Flight"."airlineId"
+
+Ref: "Seat"."ticketId" - "Ticket"."id"
+
+Ref: "Ticket"."flightId" > "Flight"."id"
+
+Ref: "Booking"."ticketId" < "Ticket"."id"
+
+Ref: "helperBooking"."passangerId" < "Passenger"."id"
+
+Ref: "helperBooking"."bookingId" > "Booking"."id"
+
+Ref: "helperBooking"."seatId" < "Seat"."id"
+
+
+// revisi 26/05/2024
+// relasi booking dengan helper booking menjadi one to many
+// relasi airport dengan flight one to many
+// hapus kolom passangerId, seatId pada tabel helperBookingId pada tabel Booking
