@@ -12,22 +12,27 @@ module.exports = (sequelize, DataTypes) => {
       Users.hasOne(models.Otp, {
         foreignKey: "userId",
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       });
       Users.hasMany(models.Notifications, {
         foreignKey: "userId",
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       });
       Users.hasMany(models.Passangers, {
         foreignKey: "userId",
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       });
       Users.hasMany(models.Bookings, {
         foreignKey: "userId",
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       });
       Users.hasMany(models.Payments, {
         foreignKey: "userId",
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       });
     }
   }

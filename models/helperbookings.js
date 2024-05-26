@@ -9,17 +9,20 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      helperBookings.belongsToMany(models.Passanger, {
+      helperBookings.belongsToMany(models.Passangers, {
         foreignKey: "passangerId",
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       });
       helperBookings.belongsTo(models.Bookings, {
         foreignKey: "bookingId",
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       });
       helperBookings.belongsToMany(models.Seats, {
         foreignKey: "seatId",
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       });
     }
   }

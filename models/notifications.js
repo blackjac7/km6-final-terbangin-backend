@@ -12,10 +12,12 @@ module.exports = (sequelize, DataTypes) => {
       Notifications.belongsTo(models.Users, {
         foreignKey: "userId",
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       });
       Notifications.belongsTo(models.Bookings, {
         foreignKey: "bookingId",
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       });
     }
   }
@@ -29,18 +31,10 @@ module.exports = (sequelize, DataTypes) => {
       userId: {
         allowNull: false,
         type: DataTypes.UUID,
-        references: {
-          table: "Users",
-          key: "id",
-        },
       },
       bookingId: {
         allowNull: false,
         type: DataTypes.UUID,
-        references: {
-          table: "Bookings",
-          key: "id",
-        },
       },
       title: {
         allowNull: false,

@@ -12,21 +12,27 @@ module.exports = (sequelize, DataTypes) => {
       Bookings.hasMany(models.Notifications, {
         foreignKey: "bookingId",
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       });
       Bookings.hasMany(models.helperBookings, {
         foreignKey: "bookingId",
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       });
       Bookings.belongsTo(models.Users, {
         foreignKey: "userId",
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       });
       Bookings.belongsTo(models.Tickets, {
         foreignKey: "ticketId",
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       });
       Bookings.belongsTo(models.Payments, {
         foreignKey: "paymentId",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       });
     }
   }

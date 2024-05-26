@@ -12,10 +12,12 @@ module.exports = (sequelize, DataTypes) => {
       Passangers.belongsTo(models.Users, {
         foreignKey: "userId",
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       });
       Passangers.hasOne(models.helperBookings, {
         foreignKey: "passangerId",
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       });
     }
   }
@@ -29,10 +31,6 @@ module.exports = (sequelize, DataTypes) => {
       userId: {
         allowNull: false,
         type: DataTypes.UUID,
-        references: {
-          table: "Users",
-          key: "id",
-        },
       },
       title: {
         type: DataTypes.ENUM("MRS", "MR"),

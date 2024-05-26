@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       Payments.belongsToMany(models.Users, {
         foreignKey: "userId",
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       });
     }
   }
@@ -25,10 +26,6 @@ module.exports = (sequelize, DataTypes) => {
       userId: {
         allowNull: false,
         type: DataTypes.UUID,
-        references: {
-          table: "Users",
-          key: "id",
-        },
       },
       expire: {
         type: DataTypes.TIME,

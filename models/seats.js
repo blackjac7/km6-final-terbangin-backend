@@ -12,10 +12,12 @@ module.exports = (sequelize, DataTypes) => {
       Seats.hasOne(models.helperBookings, {
         foreignKey: "seatId",
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       });
       Seats.belongsTo(models.Tickets, {
         foreignKey: "ticketId",
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       });
     }
   }

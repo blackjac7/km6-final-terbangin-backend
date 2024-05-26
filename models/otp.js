@@ -9,8 +9,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Otp.belongsTo(models.users, {
+      Otp.belongsTo(models.Users, {
         foreignKey: "userId",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       });
     }
   }
