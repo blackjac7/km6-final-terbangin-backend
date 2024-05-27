@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Seats.hasOne(models.helperBookings, {
+      Seats.hasMany(models.helperBookings, {
         foreignKey: "seatId",
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
@@ -22,37 +22,37 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Seats.init(
-    {
-      id: {
-        allowNull: false,
-        primaryKey: true,
-        type: DataTypes.UUID,
+      {
+          id: {
+              allowNull: false,
+              primaryKey: true,
+              type: DataTypes.UUID,
+          },
+          ticketId: {
+              allowNull: false,
+              type: DataTypes.UUID,
+          },
+          seatNumber: {
+              allowNull: false,
+              type: DataTypes.INTEGER,
+          },
+          airlineClass: {
+              allowNull: false,
+              type: DataTypes.ENUM("ECONOMY", "BUSINESS", "FIRST_CLASS"),
+          },
+          isAvailable: {
+              allowNull: false,
+              type: DataTypes.BOOLEAN,
+          },
+          deletedAt: {
+              type: DataTypes.DATE,
+          },
       },
-      ticketId: {
-        allowNull: false,
-        type: DataTypes.UUID,
-      },
-      seatNumber: {
-        allowNull: false,
-        type: DataTypes.INTEGER,
-      },
-      airlineClass: {
-        allowNull: false,
-        type: DataTypes.ENUM("ECONOMY", "BUSINESS", "FIRST_CLASS"),
-      },
-      isAvailable: {
-        allowNull: false,
-        type: DataTypes.BOOLEAN,
-      },
-      deletedAt: {
-        type: DataTypes.TIME,
-      },
-    },
-    {
-      sequelize,
-      modelName: "Seats",
-      paranoid: true,
-    }
+      {
+          sequelize,
+          modelName: "Seats",
+          paranoid: true,
+      }
   );
   return Seats;
 };

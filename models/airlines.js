@@ -50,7 +50,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
       },
       deletedAt: {
-        type: DataTypes.TIME,
+        type: DataTypes.DATE,
       },
     },
     {

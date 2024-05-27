@@ -22,41 +22,41 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Airports.init(
-    {
-      id: {
-        allowNull: false,
-        primaryKey: true,
-        type: DataTypes.UUID,
+      {
+          id: {
+              allowNull: false,
+              primaryKey: true,
+              type: DataTypes.UUID,
+          },
+          name: {
+              allowNull: false,
+              type: DataTypes.STRING,
+          },
+          terminal: {
+              allowNull: false,
+              type: DataTypes.STRING,
+          },
+          city: {
+              allowNull: false,
+              type: DataTypes.STRING,
+          },
+          country: {
+              allowNull: false,
+              type: DataTypes.STRING,
+          },
+          continent: {
+              allowNull: false,
+              type: DataTypes.STRING,
+          },
+          deletedAt: {
+              type: DataTypes.DATE,
+          },
       },
-      name: {
-        allowNull: false,
-        type: DataTypes.STRING,
-      },
-      terminal: {
-        allowNull: false,
-        type: DataTypes.STRING,
-      },
-      city: {
-        allowNull: false,
-        type: DataTypes.STRING,
-      },
-      country: {
-        allowNull: false,
-        type: DataTypes.STRING,
-      },
-      continent: {
-        allowNull: false,
-        type: DataTypes.STRING,
-      },
-      deletedAt: {
-        type: DataTypes.TIME,
-      },
-    },
-    {
-      sequelize,
-      modelName: "Airports",
-      paranoid: true,
-    }
+      {
+          sequelize,
+          modelName: "Airports",
+          paranoid: true,
+      }
   );
   return Airports;
 };

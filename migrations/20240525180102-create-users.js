@@ -30,7 +30,7 @@ module.exports = {
         type: Sequelize.TEXT,
       },
       deletedAt: {
-        type: Sequelize.TIME,
+        type: Sequelize.DATE,
       },
       createdAt: {
         allowNull: false,

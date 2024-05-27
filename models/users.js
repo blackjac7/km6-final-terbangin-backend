@@ -65,7 +65,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
       },
       deletedAt: {
-        type: DataTypes.TIME,
+        type: DataTypes.DATE,
       },
     },
     {

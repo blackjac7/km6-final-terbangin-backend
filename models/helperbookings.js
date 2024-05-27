@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      helperBookings.belongsToMany(models.Passangers, {
+      helperBookings.belongsTo(models.Passangers, {
         foreignKey: "passangerId",
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       });
-      helperBookings.belongsToMany(models.Seats, {
+      helperBookings.belongsTo(models.Seats, {
         foreignKey: "seatId",
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
@@ -27,30 +27,30 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   helperBookings.init(
-    {
-      id: {
-        allowNull: false,
-        primaryKey: true,
-        type: DataTypes.UUID,
+      {
+          id: {
+              allowNull: false,
+              primaryKey: true,
+              type: DataTypes.UUID,
+          },
+          passangerId: {
+              type: DataTypes.UUID,
+          },
+          bookingId: {
+              type: DataTypes.UUID,
+          },
+          seatId: {
+              type: DataTypes.UUID,
+          },
+          deletedAt: {
+              type: DataTypes.DATE,
+          },
       },
-      passangerId: {
-        type: DataTypes.UUID,
-      },
-      bookingId: {
-        type: DataTypes.UUID,
-      },
-      seatId: {
-        type: DataTypes.UUID,
-      },
-      deletedAt: {
-        type: DataTypes.TIME,
-      },
-    },
-    {
-      sequelize,
-      modelName: "helperBookings",
-      paranoid: true,
-    }
+      {
+          sequelize,
+          modelName: "helperBookings",
+          paranoid: true,
+      }
   );
   return helperBookings;
 };

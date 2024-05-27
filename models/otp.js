@@ -17,42 +17,42 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Otp.init(
-    {
-      id: {
-        allowNull: false,
-        primaryKey: true,
-        type: DataTypes.UUID,
+      {
+          id: {
+              allowNull: false,
+              primaryKey: true,
+              type: DataTypes.UUID,
+          },
+          userId: {
+              allowNull: false,
+              type: DataTypes.UUID,
+              references: {
+                  model: "Users",
+                  key: "id",
+              },
+          },
+          code: {
+              allowNull: false,
+              type: DataTypes.TEXT,
+          },
+          expire: {
+              allowNull: false,
+              type: DataTypes.TIME,
+          },
+          isUsed: {
+              allowNull: false,
+              defaultValue: false,
+              type: DataTypes.BOOLEAN,
+          },
+          deletedAt: {
+              type: DataTypes.DATE,
+          },
       },
-      userId: {
-        allowNull: false,
-        type: DataTypes.UUID,
-        references: {
-          model: "Users",
-          key: "id",
-        },
-      },
-      code: {
-        allowNull: false,
-        type: DataTypes.TEXT,
-      },
-      expire: {
-        allowNull: false,
-        type: DataTypes.TIME,
-      },
-      isUsed: {
-        allowNull: false,
-        defaultValue: false,
-        type: DataTypes.BOOLEAN,
-      },
-      deletedAt: {
-        type: DataTypes.TIME,
-      },
-    },
-    {
-      sequelize,
-      modelName: "Otp",
-      paranoid: true,
-    }
+      {
+          sequelize,
+          modelName: "Otp",
+          paranoid: true,
+      }
   );
   return Otp;
 };
