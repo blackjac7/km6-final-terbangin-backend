@@ -6,7 +6,7 @@ exports.getProfileById = async (id) => {
 
     if (!data) {
         throw new HttpError({
-            status: 404,
+            statusCode: 404,
             message: `User with ID ${id} does not exist!`,
         });
     }
@@ -18,7 +18,7 @@ exports.getProfileByEmail = async (email) => {
 
     if (!data) {
         throw new HttpError({
-            status: 404,
+            statusCode: 404,
             message: `User with email ${email} does not exist!`,
         });
     }
@@ -30,7 +30,7 @@ exports.getProfileByPhoneNumber = async (phoneNumber) => {
 
     if (!data) {
         throw new HttpError({
-            status: 404,
+            statusCode: 404,
             message: `User with phone number ${phoneNumber} does not exist!`,
         });
     }
@@ -42,7 +42,7 @@ exports.updateProfileById = async (id, payload) => {
 
     if (!data) {
         throw new HttpError({
-            status: 404,
+            statusCode: 404,
             message: `User with ID ${id} does not exist!`,
         });
     }
@@ -54,7 +54,7 @@ exports.deleteProfileById = async (id) => {
 
     if (!data) {
         throw new HttpError({
-            status: 404,
+            statusCode: 404,
             message: `User with ID ${id} does not exist!`,
         });
     }
