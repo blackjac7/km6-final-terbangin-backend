@@ -27,40 +27,40 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Tickets.init(
-    {
-      id: {
-        allowNull: false,
-        primaryKey: true,
-        type: DataTypes.UUID,
+      {
+          id: {
+              allowNull: false,
+              primaryKey: true,
+              type: DataTypes.UUID,
+          },
+          flightId: {
+              allowNull: false,
+              type: DataTypes.UUID,
+          },
+          price: {
+              allowNull: false,
+              type: DataTypes.INTEGER,
+          },
+          type: {
+              type: DataTypes.ENUM("BABY", "CHILD", "ADULT"),
+          },
+          deletedAt: {
+              type: DataTypes.DATE,
+          },
+          createdAt: {
+              allowNull: false,
+              type: DataTypes.DATE,
+          },
+          updatedAt: {
+              allowNull: false,
+              type: DataTypes.DATE,
+          },
       },
-      flightId: {
-        allowNull: false,
-        type: DataTypes.UUID,
-      },
-      price: {
-        allowNull: false,
-        type: DataTypes.INTEGER,
-      },
-      type: {
-        type: DataTypes.ENUM("BABY", "CHILD", "ADULT"),
-      },
-      deletedAt: {
-        type: DataTypes.TIME,
-      },
-      createdAt: {
-        allowNull: false,
-        type: DataTypes.DATE,
-      },
-      updatedAt: {
-        allowNull: false,
-        type: DataTypes.DATE,
-      },
-    },
-    {
-      sequelize,
-      modelName: "Tickets",
-      paranoid: true,
-    }
+      {
+          sequelize,
+          modelName: "Tickets",
+          paranoid: true,
+      }
   );
   return Tickets;
 };

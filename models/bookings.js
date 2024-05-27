@@ -37,33 +37,33 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Bookings.init(
-    {
-      id: {
-        allowNull: false,
-        primaryKey: true,
-        type: DataTypes.UUID,
+      {
+          id: {
+              allowNull: false,
+              primaryKey: true,
+              type: DataTypes.UUID,
+          },
+          userId: {
+              allowNull: false,
+              type: DataTypes.UUID,
+          },
+          ticketId: {
+              allowNull: false,
+              type: DataTypes.UUID,
+          },
+          paymentId: {
+              allowNull: false,
+              type: DataTypes.UUID,
+          },
+          deletedAt: {
+              type: DataTypes.DATE,
+          },
       },
-      userId: {
-        allowNull: false,
-        type: DataTypes.UUID,
-      },
-      ticketId: {
-        allowNull: false,
-        type: DataTypes.UUID,
-      },
-      paymentId: {
-        allowNull: false,
-        type: DataTypes.UUID,
-      },
-      deletedAt: {
-        type: DataTypes.TIME,
-      },
-    },
-    {
-      sequelize,
-      modelName: "Bookings",
-      paranoid: true,
-    }
+      {
+          sequelize,
+          modelName: "Bookings",
+          paranoid: true,
+      }
   );
   return Bookings;
 };

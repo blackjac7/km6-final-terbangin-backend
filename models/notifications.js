@@ -22,37 +22,37 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Notifications.init(
-    {
-      id: {
-        allowNull: false,
-        primaryKey: true,
-        type: DataTypes.UUID,
+      {
+          id: {
+              allowNull: false,
+              primaryKey: true,
+              type: DataTypes.UUID,
+          },
+          userId: {
+              allowNull: false,
+              type: DataTypes.UUID,
+          },
+          bookingId: {
+              allowNull: false,
+              type: DataTypes.UUID,
+          },
+          title: {
+              allowNull: false,
+              type: DataTypes.TEXT,
+          },
+          message: {
+              allowNull: false,
+              type: DataTypes.TEXT,
+          },
+          deletedAt: {
+              type: DataTypes.DATE,
+          },
       },
-      userId: {
-        allowNull: false,
-        type: DataTypes.UUID,
-      },
-      bookingId: {
-        allowNull: false,
-        type: DataTypes.UUID,
-      },
-      title: {
-        allowNull: false,
-        type: DataTypes.TEXT,
-      },
-      message: {
-        allowNull: false,
-        type: DataTypes.TEXT,
-      },
-      deletedAt: {
-        type: DataTypes.TIME,
-      },
-    },
-    {
-      sequelize,
-      modelName: "Notifications",
-      paranoid: true,
-    }
+      {
+          sequelize,
+          modelName: "Notifications",
+          paranoid: true,
+      }
   );
   return Notifications;
 };

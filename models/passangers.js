@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       });
-      Passangers.hasOne(models.helperBookings, {
+      Passangers.hasMany(models.helperBookings, {
         foreignKey: "passangerId",
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
@@ -22,49 +22,49 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Passangers.init(
-    {
-      id: {
-        allowNull: false,
-        primaryKey: true,
-        type: DataTypes.UUID,
+      {
+          id: {
+              allowNull: false,
+              primaryKey: true,
+              type: DataTypes.UUID,
+          },
+          userId: {
+              allowNull: false,
+              type: DataTypes.UUID,
+          },
+          title: {
+              type: DataTypes.ENUM("MRS", "MR"),
+          },
+          fullName: {
+              allowNull: false,
+              type: DataTypes.STRING,
+          },
+          familyName: {
+              type: DataTypes.STRING,
+          },
+          birthDate: {
+              allowNull: false,
+              type: DataTypes.DATE,
+          },
+          nationality: {
+              type: DataTypes.STRING,
+          },
+          identityId: {
+              allowNull: false,
+              type: DataTypes.STRING,
+          },
+          issuingCountry: {
+              type: DataTypes.STRING,
+          },
+          deletedAt: {
+              type: DataTypes.DATE,
+          },
       },
-      userId: {
-        allowNull: false,
-        type: DataTypes.UUID,
-      },
-      title: {
-        type: DataTypes.ENUM("MRS", "MR"),
-      },
-      fullName: {
-        allowNull: false,
-        type: DataTypes.STRING,
-      },
-      familyName: {
-        type: DataTypes.STRING,
-      },
-      birthDate: {
-        allowNull: false,
-        type: DataTypes.DATE,
-      },
-      nationality: {
-        type: DataTypes.STRING,
-      },
-      identityId: {
-        allowNull: false,
-        type: DataTypes.STRING,
-      },
-      issuingCountry: {
-        type: DataTypes.STRING,
-      },
-      deletedAt: {
-        type: DataTypes.TIME,
-      },
-    },
-    {
-      sequelize,
-      modelName: "Passangers",
-      paranoid: true,
-    }
+      {
+          sequelize,
+          modelName: "Passangers",
+          paranoid: true,
+      }
   );
   return Passangers;
 };
