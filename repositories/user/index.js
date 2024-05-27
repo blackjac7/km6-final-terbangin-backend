@@ -1,7 +1,7 @@
 const crypto = require("crypto");
 const path = require("path");
 const bcrypt = require("bcrypt");
-const { user } = require("../../models");
+const { users } = require("../../models");
 const uploader = require("../../helpers/cloudinary");
 
 exports.getUserByEmail = async (email) => {
@@ -9,7 +9,7 @@ exports.getUserByEmail = async (email) => {
     where: { email },
   };
 
-  const data = await user.findOne(opt);
+  const data = await users.findOne(opt);
 
   return data;
 };
@@ -33,7 +33,7 @@ exports.createUser = async (payload) => {
     payload.picture = payload?.picture;
   }
 
-  const data = await user.create(payload);
+  const data = await users.create(payload);
 
   return data;
 };
