@@ -3,6 +3,7 @@ const HttpError = require("../../middlewares/HttpError");
 
 exports.getProfileById = async (id) => {
     const data = await userRepo.getUserById(id);
+    console.log(data);
 
     if (!data) {
         throw new HttpError({
