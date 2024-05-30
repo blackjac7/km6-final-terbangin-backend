@@ -12,12 +12,9 @@ module.exports = {
             allowNull: false,
             type: Sequelize.UUID,
         },
-        price: {
+        totalPrice: {
             allowNull: false,
             type: Sequelize.INTEGER,
-        },
-        type: {
-            type: Sequelize.ENUM("BABY", "CHILD", "ADULT"),
         },
         deletedAt: {
             type: Sequelize.DATE,

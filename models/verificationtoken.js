@@ -1,7 +1,9 @@
-"use strict";
-const { Model } = require("sequelize");
+'use strict';
+const {
+  Model
+} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Otp extends Model {
+  class verificationToken extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,31 +13,17 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  Otp.init(
+  verificationToken.init(
     {
-      id: {
+      token: {
         allowNull: false,
-        primaryKey: true,
+        type: DataTypes.STRING,
+      },
+      userId: {
+        allowNull: false,
         type: DataTypes.UUID,
       },
-      email: {
-        allowNull: true,
-        type: DataTypes.TEXT,
-      },
-      phonenumber: {
-        allowNull: true,
-        type: DataTypes.TEXT,
-      },
-      code: {
-        allowNull: false,
-        type: DataTypes.TEXT,
-      },
-      expire: {
-        allowNull: false,
-        type: DataTypes.TIME,
-      },
-      isUsed: {
-        allowNull: false,
+      status: {
         defaultValue: false,
         type: DataTypes.BOOLEAN,
       },
@@ -45,9 +33,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "Otp",
+      modelName: "VerificationToken",
       paranoid: true,
     }
   );
-  return Otp;
+  return verificationToken;
 };
