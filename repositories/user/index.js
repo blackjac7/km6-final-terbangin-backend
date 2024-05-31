@@ -6,22 +6,12 @@ const uploader = require("../../helpers/cloudinary");
 const profileUtils = require("./utils");
 const { v4: uuidv4 } = require("uuid");
 
-// exports.getUserByEmail = async (email) => {
-//   const opt = {
-//     where: { email },
-//   };
-
-//   const data = await users.findOne(opt);
-
-//   return data;
-// };
-
 exports.createUser = async (payload) => {
     payload.password = await bcrypt.hash(payload.password, 10);
 
     payload.id = uuidv4();
 
-    if (payload.picture) {
+    if (typeof payload.picture != "string") {
         const { picture } = payload;
 
         picture.publicId = crypto.randomBytes(16).toString("hex");

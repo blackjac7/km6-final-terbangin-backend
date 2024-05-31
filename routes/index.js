@@ -12,4 +12,8 @@ router.use("/auth", authRoutes);
 
 router.use("/verification", verificationRoutes);
 
+
 module.exports = router;
+
+
+
