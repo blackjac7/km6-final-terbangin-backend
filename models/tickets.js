@@ -37,12 +37,9 @@ module.exports = (sequelize, DataTypes) => {
               allowNull: false,
               type: DataTypes.UUID,
           },
-          price: {
+          totalPrice: {
               allowNull: false,
               type: DataTypes.INTEGER,
-          },
-          type: {
-              type: DataTypes.ENUM("BABY", "CHILD", "ADULT"),
           },
           deletedAt: {
               type: DataTypes.DATE,

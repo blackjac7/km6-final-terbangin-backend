@@ -35,9 +35,6 @@ module.exports = (sequelize, DataTypes) => {
       picture: {
         type: DataTypes.TEXT,
       },
-      classType: {
-        type: DataTypes.ENUM("ECONOMY", "BUSINESS", "FIRST_CLASS"),
-      },
       baggage: {
         allowNull: "false",
         type: DataTypes.INTEGER,

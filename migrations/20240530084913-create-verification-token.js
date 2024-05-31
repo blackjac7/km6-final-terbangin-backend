@@ -1,32 +1,23 @@
-"use strict";
+'use strict';
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Otps", {
+    await queryInterface.createTable("VerificationTokens", {
       id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.UUID,
       },
-      email:{
-        allowNull:true,
-        type: Sequelize.TEXT
+      token: {
+        allowNull:false,
+        type: Sequelize.STRING,
       },
-      phonenumber:{
-        allowNull:true,
-        type: Sequelize.TEXT
+      userId: {
+        allowNull:false,
+        type: Sequelize.UUID,
       },
-      code: {
-        allowNull: false,
-        type: Sequelize.TEXT,
-      },
-      expire: {
-        allowNull: false,
-        type: Sequelize.TIME,
-      },
-      isUsed: {
-        allowNull: false,
-        defaultValue: false,
+      status: {
+        defaultValue:false,
         type: Sequelize.BOOLEAN,
       },
       deletedAt: {
@@ -43,6 +34,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Otps");
-  },
+    await queryInterface.dropTable('VerificationTokens');
+  }
 };
