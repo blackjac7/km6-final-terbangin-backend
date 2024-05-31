@@ -14,7 +14,7 @@ exports.generateLink = async (email) => {
 
     if (!user) {
         throw {
-            status: 400,
+            statusCode: 400,
             message: "Email not registered",
         };
     }
@@ -50,7 +50,7 @@ exports.verifyLink = async (token) => {
         decoded = jwt.verify(token, process.env.JWT_SECRET_VERIFICATION_LINK);
     } catch (err) {
         throw {
-            status: 400,
+            statusCode: 400,
             message: "Invalid or expired token",
         };
     }
@@ -60,7 +60,7 @@ exports.verifyLink = async (token) => {
 
     if (!verificationToken || verificationToken.status) {
         throw {
-            status: 400,
+            statusCode: 400,
             message: "Link is already used or expired",
         };
     }
@@ -84,7 +84,7 @@ exports.updatePassword = async (userId, token, newPassword) => {
 
     if (!user || !verificationToken) {
         throw {
-            status: 400,
+            statusCode: 400,
             message: "Invalid user ID or token",
         };
     }

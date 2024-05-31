@@ -10,7 +10,7 @@ exports.generateLink = async (req, res, next) => {
 
         if (!email) {
             throw {
-                status: 400,
+                statusCode: 400,
                 message: "Email is required",
             };
         }
@@ -31,7 +31,7 @@ exports.verifyLink = async (req, res, next) => {
 
         if (!token) {
             throw {
-                status: 400,
+                statusCode: 400,
                 message: "Token is required",
             };
         }
@@ -49,7 +49,7 @@ exports.updatePassword = async (req, res, next) => {
 
         if (!userId || !token || !newPassword) {
             throw {
-                status: 400,
+                statusCode: 400,
                 message: "User ID, token, and new password are required",
             };
         }
