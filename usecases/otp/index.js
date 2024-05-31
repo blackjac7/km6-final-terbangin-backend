@@ -100,7 +100,8 @@ exports.generateOTPSMS = async (phoneNumber) => {
 };
 
 exports.verifyOTP = async (email, phoneNumber, otp) => {
-    const formattedPhoneNumber = formatPhoneNumber(phoneNumber);
+    // const formattedPhoneNumber = formatPhoneNumber(phoneNumber); // format phoneNumber masih proses
+    const formattedPhoneNumber = phoneNumber;
 
     let whereCondition = {
         code: otp,

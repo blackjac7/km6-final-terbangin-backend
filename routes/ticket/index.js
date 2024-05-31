@@ -5,14 +5,14 @@ const ticketController = require("../../controllers/ticket");
 router.get("/byflight", ticketController.getTicketsByFlight);
 
 router
-  .route("/")
-  .get(ticketController.getTickets)
-  .post(ticketController.createTicket);
+    .route("/")
+    .get(ticketController.getTickets)
+    .post(ticketController.createTicket);
 
 router
-  .route("/:id")
-  .get(ticketController.getTicket)
-  .put(ticketController.updateTicket)
-  .delete(ticketController.deleteTicket);
+    .route("/:id")
+    .get(ticketController.getTicket)
+    .put(ticketController.updateTicket)
+    .delete(ticketController.deleteTicket);
 
 module.exports = router;
