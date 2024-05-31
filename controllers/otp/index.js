@@ -10,7 +10,7 @@ exports.generateOTPEmail = async (req, res, next) => {
 
         if (!email) {
             throw {
-                status: 400,
+                statusCode: 400,
                 message: "Email is required",
             };
         }
@@ -32,7 +32,7 @@ exports.generateOTPSMS = async (req, res, next) => {
 
         if (!phoneNumber) {
             throw {
-                status: 400,
+                statusCode: 400,
                 message: "Phone number is required",
             };
         }
@@ -54,14 +54,14 @@ exports.verifyOTP = async (req, res, next) => {
 
         if (!email && !phoneNumber) {
             throw {
-                status: 400,
+                statusCode: 400,
                 message: "Email or phone number is required",
             };
         }
 
         if (!otp) {
             throw {
-                status: 400,
+                statusCode: 400,
                 message: "OTP is required",
             };
         }

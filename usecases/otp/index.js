@@ -17,7 +17,7 @@ exports.generateOTPEmail = async (email) => {
 
     if (user) {
         throw {
-            status: 400,
+            statusCode: 400,
             message: "Email already registered",
         };
     }
@@ -57,7 +57,7 @@ exports.generateOTPSMS = async (phoneNumber) => {
 
     if (user) {
         throw {
-            status: 400,
+            statusCode: 400,
             message: "Phone number already registered",
         };
     }
@@ -121,7 +121,7 @@ exports.verifyOTP = async (email, phoneNumber, otp) => {
         return existingOTP;
     } else {
         throw {
-            status: 400,
+            statusCode: 400,
             message: "Invalid OTP or OTP expired",
         };
     }

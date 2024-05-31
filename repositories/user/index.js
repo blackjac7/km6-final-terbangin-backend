@@ -11,7 +11,7 @@ exports.createUser = async (payload) => {
 
     payload.id = uuidv4();
 
-    if (typeof payload.picture != "string") {
+    if (payload.picture && typeof payload.picture !== "string") {
         const { picture } = payload;
 
         picture.publicId = crypto.randomBytes(16).toString("hex");
@@ -21,10 +21,6 @@ exports.createUser = async (payload) => {
         const imageUpload = await uploader(picture);
 
         payload.picture = imageUpload.secure_url;
-    }
-
-    if (payload?.picture) {
-        payload.picture = payload?.picture;
     }
 
     const data = await Users.create(payload);
