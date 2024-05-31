@@ -20,9 +20,6 @@ module.exports = {
         picture: {
             type: Sequelize.TEXT,
         },
-        classType: {
-            type: Sequelize.ENUM("ECONOMY", "BUSINESS", "FIRST_CLASS"),
-        },
         baggage: {
             allowNull: "false",
             type: Sequelize.INTEGER,

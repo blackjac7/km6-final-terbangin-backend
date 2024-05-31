@@ -9,11 +9,6 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Users.hasOne(models.Otp, {
-        foreignKey: "userId",
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE",
-      });
       Users.hasMany(models.Notifications, {
         foreignKey: "userId",
         onDelete: "CASCADE",
@@ -30,6 +25,11 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: "CASCADE",
       });
       Users.hasMany(models.Payments, {
+        foreignKey: "userId",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      });
+      Users.hasMany(models.VerificationToken, {
         foreignKey: "userId",
         onDelete: "CASCADE",
         onUpdate: "CASCADE",

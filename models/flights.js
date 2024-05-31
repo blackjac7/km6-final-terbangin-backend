@@ -32,48 +32,60 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Flights.init(
-      {
-          id: {
-              allowNull: false,
-              primaryKey: true,
-              type: DataTypes.UUID,
-          },
-          airlineId: {
-              allowNull: false,
-              type: DataTypes.UUID,
-          },
-          duration: {
-              type: DataTypes.INTEGER,
-          },
-          startAirportId: {
-              allowNull: false,
-              type: DataTypes.UUID,
-          },
-          endAirportId: {
-              allowNull: false,
-              type: DataTypes.UUID,
-          },
-          capacity: {
-              allowNull: false,
-              type: DataTypes.INTEGER,
-          },
-          departureAt: {
-              allowNull: false,
-              type: DataTypes.DATE,
-          },
-          arrivalAt: {
-              allowNull: false,
-              type: DataTypes.DATE,
-          },
-          deletedAt: {
-              type: DataTypes.DATE,
-          },
+    {
+      id: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.UUID,
       },
-      {
-          sequelize,
-          modelName: "Flights",
-          paranoid: true,
-      }
+      airlineId: {
+        allowNull: false,
+        type: DataTypes.UUID,
+      },
+      duration: {
+        type: DataTypes.INTEGER,
+      },
+      startAirportId: {
+        allowNull: false,
+        type: DataTypes.UUID,
+      },
+      endAirportId: {
+        allowNull: false,
+        type: DataTypes.UUID,
+      },
+      capacity: {
+        allowNull: false,
+        type: DataTypes.INTEGER,
+      },
+      priceEconomy: {
+        allowNull: true,
+        type: DataTypes.INTEGER,
+      },
+      priceBussines: {
+        allowNull: true,
+        type: DataTypes.INTEGER,
+      },
+      priceFirstClass: {
+        allowNull: true,
+        type: DataTypes.INTEGER,
+      },
+      departureAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+      },
+      arrivalAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+      },
+      deletedAt: {
+        type: DataTypes.DATE,
+      },
+    },
+    {
+      sequelize,
+      modelName: "Flights",
+      paranoid: true,
+    }
   );
   return Flights;
 };
