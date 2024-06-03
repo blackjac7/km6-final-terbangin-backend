@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Notifications.belongsTo(models.Users, {
+      verificationToken.belongsTo(models.Users, {
         foreignKey: "userId",
         onDelete: "CASCADE",
         onUpdate: "CASCADE",

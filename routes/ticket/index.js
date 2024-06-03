@@ -10,7 +10,7 @@ router
   .post(ticketController.createTicket);
 
 router
-  .route("/:id")
+  .route("/id/:id")
   .get(ticketController.getTicket)
   .put(ticketController.updateTicket)
   .delete(ticketController.deleteTicket);

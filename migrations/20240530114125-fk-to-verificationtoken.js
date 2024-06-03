@@ -30,7 +30,7 @@ module.exports = {
      * await queryInterface.dropTable('users');
      */
         await queryInterface.removeConstraint(
-          "verificationTokens",
+          "VerificationTokens",
           "fk-to-verificationtokens-userId"
         );
   }
