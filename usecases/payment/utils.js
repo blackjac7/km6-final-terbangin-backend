@@ -9,7 +9,7 @@ exports.calculateExpiryDate = () => {
         expiryDate.setDate(expiryDate.getDate() + 1);
         expiryDate.setHours(expiryHour % 24);
     } else {
-        expiryHour.setHours(expiryHour);
+        expiryDate.setHours(expiryHour);
     }
     return expiryDate;
 };

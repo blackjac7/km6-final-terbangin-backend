@@ -77,9 +77,12 @@ exports.addPayment = async (payload) => {
             message: "Field totalPrice must be filled!",
         });
     }
-    payload.id = uuidv4();
-    payload.userId = user.id;
-    payload.expire = paymentUtils.calculateExpiryDate();
+    payload = {
+        ...payload,
+        id: uuidv4(),
+        userId: user.id,
+        expire: paymentUtils.calculateExpiryDate(),
+    };
 
     return paymentRepo.addPayment(payload);
 };
@@ -87,6 +90,7 @@ exports.addPayment = async (payload) => {
 exports.updatePaymentById = async (id, payload) => {
     const toBeUpdated = await this.getPaymentById(id);
 
+    // payment yg statusnya issued udah ga bisa di-update lagi
     if (toBeUpdated.status === PaymentStatus.ISSUED) {
         return toBeUpdated;
     }
