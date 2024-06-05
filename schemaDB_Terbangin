@@ -40,17 +40,14 @@ Table Flight {
   duration int [not null]
   startAirportId uuid [not null]
   endAirportId uuid [not null]
-  capacity int [not null]
+  priceEconomy integer
+  priceBussines integer
+  priceFirstClass integer
+  capacityEconomy integer 
+  capacityFirstClass integer
+  capacityBussines integer
   departureAt datetime [not null]
   arrivalAt datetime [not null]
-}
-
-Table Ticket {
- id uuid [primary key]
- flightId uuid [not null]
-
- price int [not null]
- type TicketType [not null] // tipe tiket
 }
 
 Table Passenger {
@@ -64,6 +61,7 @@ Table Passenger {
   identityId varchar [not null]
   issuingCountry varchar 
   expirationDate date
+   type TicketType [not null] // tipe tiket
 } 
 
 Table Airline {
@@ -71,7 +69,7 @@ Table Airline {
    serialNumber varchar [not null]
    name varchar [not null]
    picture text [not null] // harus not null kah?
-   classType AirlineClass [not null]
+   
    baggage int [not null]
    cabinBaggage int [not null]
    additionals varchar 
@@ -89,7 +87,7 @@ Table Airport {
 Table Booking {
     id uuid [primary key]
     userId uuid [not null]
-   ticketId uuid [not null]
+  
     paymentId uuid [not null]
   }
 
@@ -112,7 +110,8 @@ Table OTP {
 
 Table Seat {
   id uuid [primary key]
-  ticketId uuid [not null]
+
+  flightId uuid [null]
   seatNumber int [not null]
   airlineClass AirlineClass [not null]
   isAvailable bool [not null, default: false]
@@ -139,8 +138,6 @@ Ref: "Payment"."id" - "Booking"."paymentId"
 
 Ref: "User"."id" < "Booking"."userId"
 
-Ref: "OTP"."userId" - "User"."id"
-
 Ref: "Flight"."startAirportId" > "Airport"."id"
 
 Ref: "Flight"."endAirportId" > "Airport"."id"
@@ -153,20 +150,10 @@ Ref: "Payment"."userId" > "User"."id"
 
 Ref: "Airline"."id" < "Flight"."airlineId"
 
-Ref: "Seat"."ticketId" - "Ticket"."id"
-
-Ref: "Ticket"."flightId" > "Flight"."id"
-
-Ref: "Booking"."ticketId" < "Ticket"."id"
-
-Ref: "helperBooking"."passangerId" < "Passenger"."id"
+Ref: "helperBooking"."passangerId" > "Passenger"."id"
 
 Ref: "helperBooking"."bookingId" > "Booking"."id"
 
-Ref: "helperBooking"."seatId" < "Seat"."id"
+Ref: "helperBooking"."seatId" > "Seat"."id"
 
-
-// revisi 26/05/2024
-// relasi booking dengan helper booking menjadi one to many
-// relasi airport dengan flight one to many
-// hapus kolom passangerId, seatId pada tabel Booking
+Ref: "Seat"."flightId" < "Flight"."id"
