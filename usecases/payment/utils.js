@@ -1,4 +1,4 @@
-const { PaymentStatus } = require("../../constants/index");
+const { PaymentStatus } = require("../../utils/constants");
 
 // payment yg ga dibayar lebih dari 10 jam akan expire
 exports.calculateExpiryDate = () => {

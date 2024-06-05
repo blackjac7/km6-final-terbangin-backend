@@ -3,7 +3,8 @@ const paymentUsecase = require("../../usecases/payment/index");
 exports.getPaymentById = async (req, res, next) => {
     try {
         const paymentId = req?.params?.id;
-        const data = await paymentUsecase.getPaymentById(paymentId);
+        const user = req?.user;
+        const data = await paymentUsecase.getPaymentById(paymentId, user);
 
         return res.status(200).json({
             data,
@@ -17,7 +18,8 @@ exports.getPaymentById = async (req, res, next) => {
 exports.getPaymentsByUserId = async (req, res, next) => {
     try {
         const userId = req?.params?.userId;
-        const data = await paymentUsecase.getPaymentsByUserId(userId);
+        const user = req?.user;
+        const data = await paymentUsecase.getPaymentsByUserId(userId, user);
 
         return res.status(200).json({
             data,
@@ -46,7 +48,8 @@ exports.addPayment = async (req, res, next) => {
 exports.updatePaymentById = async (req, res, next) => {
     try {
         const paymentId = req?.params?.id;
-        const payload = req?.body;
+        const user = req?.user;
+        const payload = { ...req?.body, user };
         const data = await paymentUsecase.updatePaymentById(paymentId, payload);
 
         return res.status(200).json({
@@ -61,7 +64,8 @@ exports.updatePaymentById = async (req, res, next) => {
 exports.deletePaymentById = async (req, res, next) => {
     try {
         const paymentId = req?.params?.id;
-        const data = await paymentUsecase.deletePaymentById(paymentId);
+        const user = req?.user;
+        const data = await paymentUsecase.deletePaymentById(paymentId, user);
 
         return res.status(200).json({
             data,

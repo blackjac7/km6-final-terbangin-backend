@@ -1,10 +1,10 @@
 const paymentRepo = require("../../repositories/payment/index");
 const paymentUtils = require("./utils");
-const HttpError = require("../../middlewares/HttpError");
-const { PaymentStatus } = require("../../constants/index");
+const HttpError = require("../../utils/HttpError");
+const { PaymentStatus } = require("../../utils/constants");
 const { v4: uuidv4 } = require("uuid");
 
-exports.getPaymentById = async (id) => {
+exports.getPaymentById = async (id, user) => {
     const data = await paymentRepo.getPaymentById(id);
 
     if (!data) {
@@ -13,27 +13,32 @@ exports.getPaymentById = async (id) => {
             message: `Payment with ID ${id} does not exist!`,
         });
     }
+    // cek kalo payment dengan ID tsb. memang milik user yg bersangkutan
+    if (data.userId !== user.id) {
+        throw new HttpError({
+            statusCode: 403,
+            message: "Not allowed to access other user's payment(s)!",
+        });
+    }
     const isExpired = paymentUtils.isPaymentExpired(data);
 
     if (isExpired) {
-        await paymentRepo.updatePaymentById(id, {
-            status: PaymentStatus.CANCELLED,
-        });
-        throw new HttpError({
-            statusCode: 404,
-            message: `Payment with ID ${id} has expired!`,
-        });
-    }
-    if (data.status === PaymentStatus.CANCELLED) {
-        throw new HttpError({
-            statusCode: 403,
-            message: `Payment with ID ${id} is already cancelled!`,
-        });
+        if (data.status !== PaymentStatus.CANCELLED) {
+            await paymentRepo.updatePaymentById(id, {
+                status: PaymentStatus.CANCELLED,
+            });
+        }
     }
     return data;
 };
 
-exports.getPaymentsByUserId = async (userId) => {
+exports.getPaymentsByUserId = async (userId, user) => {
+    if (userId !== user.id) {
+        throw new HttpError({
+            statusCode: 403,
+            message: "Not allowed to access other user's payment(s)!",
+        });
+    }
     const data = await paymentRepo.getPaymentsByUserId(userId);
 
     if (!data) {
@@ -45,19 +50,11 @@ exports.getPaymentsByUserId = async (userId) => {
     const isExpired = paymentUtils.isPaymentExpired(data);
 
     if (isExpired) {
-        await paymentRepo.updatePaymentById(data.id, {
-            status: PaymentStatus.CANCELLED,
-        });
-        throw new HttpError({
-            statusCode: 404,
-            message: `Payment with user ID ${userId} has expired!`,
-        });
-    }
-    if (data.status === PaymentStatus.CANCELLED) {
-        throw new HttpError({
-            statusCode: 403,
-            message: `Payment with user ID ${userId} is already cancelled!`,
-        });
+        if (data.status !== PaymentStatus.CANCELLED) {
+            await paymentRepo.updatePaymentById(id, {
+                status: PaymentStatus.CANCELLED,
+            });
+        }
     }
     return data;
 };
@@ -88,10 +85,14 @@ exports.addPayment = async (payload) => {
 };
 
 exports.updatePaymentById = async (id, payload) => {
-    const toBeUpdated = await this.getPaymentById(id);
+    const { user } = payload;
+    const toBeUpdated = await this.getPaymentById(id, user);
 
-    // payment yg statusnya issued udah ga bisa di-update lagi
-    if (toBeUpdated.status === PaymentStatus.ISSUED) {
+    // payment yg statusnya issued atau cancelled udah ga bisa di-update lagi
+    if (
+        toBeUpdated.status === PaymentStatus.ISSUED ||
+        toBeUpdated.status === PaymentStatus.CANCELLED
+    ) {
         return toBeUpdated;
     }
     return paymentRepo.updatePaymentById(id, {
@@ -100,14 +101,8 @@ exports.updatePaymentById = async (id, payload) => {
     });
 };
 
-exports.deletePaymentById = async (id) => {
-    const data = await paymentRepo.deletePaymentById(id);
-
-    if (!data) {
-        throw new HttpError({
-            statusCode: 404,
-            message: `Payment with ID ${id} does not exist!`,
-        });
-    }
-    return data;
+exports.deletePaymentById = async (id, user) => {
+    const toBeDeleted = await this.getPaymentById(id, user);
+    await paymentRepo.deletePaymentById(id);
+    return toBeDeleted;
 };

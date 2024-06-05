@@ -22,10 +22,5 @@ exports.updatePaymentById = async (id, payload) => {
 };
 
 exports.deletePaymentById = async (id) => {
-    const toBeDeleted = await Payments.findByPk(id);
-
-    if (toBeDeleted) {
-        await Payments.destroy({ where: { id } });
-    }
-    return toBeDeleted;
+    return Payments.destroy({ where: { id } });
 };

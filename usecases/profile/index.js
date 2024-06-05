@@ -1,5 +1,5 @@
 const userRepo = require("../../repositories/user");
-const HttpError = require("../../middlewares/HttpError");
+const HttpError = require("../../utils/HttpError");
 
 exports.getProfileById = async (id) => {
     const data = await userRepo.getUserById(id);
