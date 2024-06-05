@@ -55,75 +55,73 @@ exports.createFlight = async (req, res, next) => {
         statusCode: 400,
       });
     }
-    if (!seatNumber || seatNumber == "") {
+    if (!duration || duration == "") {
       return next({
-        message: "seat Number must be provided!",
+        message: "Duration must be provided!",
         statusCode: 400,
       });
     }
-    if (!airlineClass || airlineClass == "") {
+    if (!startAirportId || startAirportId == "") {
       return next({
-        message: "airlineClass must be provided!",
+        message: "startAirportId must be provided!",
         statusCode: 400,
       });
     }
-    if (!isAvailable || isAvailable == "") {
+    if (!endAirportId || endAirportId == "") {
       return next({
-        message: "status isAvailable must be provided!",
+        message: "endAirportId must be provided!",
+        statusCode: 400,
+      });
+    }
+    if (!capacity || capacity == "") {
+      return next({
+        message: "capacity must be provided!",
+        statusCode: 400,
+      });
+    }
+    if (!departureAt || departureAt == "") {
+      return next({
+        message: "departureAt must be provided!",
+        statusCode: 400,
+      });
+    }
+    if (!arrivalAt || arrivalAt == "") {
+      return next({
+        message: "arrivalAt must be provided!",
+        statusCode: 400,
+      });
+    }
+    if (!priceEconomy || priceEconomy == "") {
+      return next({
+        message: "priceEconomy must be provided!",
+        statusCode: 400,
+      });
+    }
+    if (!priceBussines || priceBussines == "") {
+      return next({
+        message: "priceBussines must be provided!",
+        statusCode: 400,
+      });
+    }
+    if (!priceFirstClass || priceFirstClass == "") {
+      return next({
+        message: "priceFirstClass must be provided!",
         statusCode: 400,
       });
     }
 
     const data = await flightusecase.createFlight({
       id,
-      ticketId,
-      seatNumber,
-      airlineClass,
-      isAvailable,
-    });
-
-    res.status(201).json({
-      message: "Successs",
-      data,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-exports.updateSeat = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const { ticketId, seatNumber, airlineClass, isAvailable } = req.body;
-    if (!ticketId || ticketId == "") {
-      return next({
-        message: "Ticket id must be provided!",
-        statusCode: 400,
-      });
-    }
-    if (!seatNumber || seatNumber == "") {
-      return next({
-        message: "seat Number must be provided!",
-        statusCode: 400,
-      });
-    }
-    if (!airlineClass || airlineClass == "") {
-      return next({
-        message: "airlineClass must be provided!",
-        statusCode: 400,
-      });
-    }
-    if (!isAvailable || isAvailable == "") {
-      return next({
-        message: "status isAvailable must be provided!",
-        statusCode: 400,
-      });
-    }
-
-    const data = await flightusecase.updateSeat(id, {
-      ticketId,
-      seatNumber,
-      airlineClass,
-      isAvailable,
+      airlineId,
+      duration,
+      startAirportId,
+      endAirportId,
+      capacity,
+      departureAt,
+      arrivalAt,
+      priceEconomy,
+      priceBussines,
+      priceFirstClass,
     });
 
     res.status(201).json({
@@ -135,10 +133,108 @@ exports.updateSeat = async (req, res, next) => {
   }
 };
 
-exports.deleteSeat = async (req, res, next) => {
+exports.updateFlight = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const data = await flightusecase.deleteSeat(id);
+    const {
+      airlineId,
+      duration,
+      startAirportId,
+      endAirportId,
+      capacity,
+      departureAt,
+      arrivalAt,
+      priceEconomy,
+      priceBussines,
+      priceFirstClass,
+    } = req.body;
+
+    if (!airlineId || airlineId == "") {
+      return next({
+        message: "Airline id must be provided!",
+        statusCode: 400,
+      });
+    }
+    if (!duration || duration == "") {
+      return next({
+        message: "Duration must be provided!",
+        statusCode: 400,
+      });
+    }
+    if (!startAirportId || startAirportId == "") {
+      return next({
+        message: "startAirportId must be provided!",
+        statusCode: 400,
+      });
+    }
+    if (!endAirportId || endAirportId == "") {
+      return next({
+        message: "endAirportId must be provided!",
+        statusCode: 400,
+      });
+    }
+    if (!capacity || capacity == "") {
+      return next({
+        message: "capacity must be provided!",
+        statusCode: 400,
+      });
+    }
+    if (!departureAt || departureAt == "") {
+      return next({
+        message: "departureAt must be provided!",
+        statusCode: 400,
+      });
+    }
+    if (!arrivalAt || arrivalAt == "") {
+      return next({
+        message: "arrivalAt must be provided!",
+        statusCode: 400,
+      });
+    }
+    if (!priceEconomy || priceEconomy == "") {
+      return next({
+        message: "priceEconomy must be provided!",
+        statusCode: 400,
+      });
+    }
+    if (!priceBussines || priceBussines == "") {
+      return next({
+        message: "priceBussines must be provided!",
+        statusCode: 400,
+      });
+    }
+    if (!priceFirstClass || priceFirstClass == "") {
+      return next({
+        message: "priceFirstClass must be provided!",
+        statusCode: 400,
+      });
+    }
+    const data = await flightusecase.updateFlight(id, {
+      airlineId,
+      duration,
+      startAirportId,
+      endAirportId,
+      capacity,
+      departureAt,
+      arrivalAt,
+      priceEconomy,
+      priceBussines,
+      priceFirstClass,
+    });
+
+    res.status(201).json({
+      message: "Successs",
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.deleteFlight = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const data = await flightusecase.deleteFlight(id);
 
     res.status(200).json({
       message: "Successs",
@@ -148,16 +244,4 @@ exports.deleteSeat = async (req, res, next) => {
     next(error);
   }
 };
-exports.deleteSeatbyTicket = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const data = await flightusecase.deleteSeatbyTicket(id);
 
-    res.status(200).json({
-      message: "Successs",
-      data,
-    });
-  } catch (error) {
-    next(error);
-  }
-};

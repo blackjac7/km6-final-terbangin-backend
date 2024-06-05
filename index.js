@@ -28,6 +28,7 @@ app.use("/api/v1", router);
 app.use((err, _, res, __) => {
     let statusCode = 500;
     let message = "Internal Server Error";
+    console.log(err)
 
     if (err?.statusCode) {
         statusCode = err.statusCode;

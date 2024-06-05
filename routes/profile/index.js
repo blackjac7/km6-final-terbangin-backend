@@ -1,7 +1,8 @@
 const router = require("express").Router();
 const profileController = require("../../controllers/profile");
 
-router.route("/id/:id")
+router
+    .route("/id/:id")
     .get(profileController.getProfileById)
     .patch(profileController.updateProfileById)
     .delete(profileController.deleteProfileById);
