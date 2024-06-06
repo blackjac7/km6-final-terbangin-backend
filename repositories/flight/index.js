@@ -6,9 +6,8 @@ exports.getFlights = async () => {
       {
         model: Airlines,
       },
-      {
-        model: Airports,
-      },
+      { model: Airports, as: "StartAirport" },
+      { model: Airports, as: "EndAirport" },
     ],
   });
   return data;
@@ -23,9 +22,8 @@ exports.getFlightbyId = async (id) => {
       {
         model: Airlines,
       },
-      {
-        model: Airports,
-      },
+      { model: Airports, as: "StartAirport" },
+      { model: Airports, as: "EndAirport" },
     ],
   });
 
@@ -34,7 +32,6 @@ exports.getFlightbyId = async (id) => {
   }
   return "data tidak ditemukan";
 };
-
 
 exports.createFlight = async (payload) => {
   const data = await Flights.create(payload);
@@ -56,9 +53,8 @@ exports.updateFlight = async (id, payload) => {
       {
         model: Airlines,
       },
-      {
-        model: Airports,
-      },
+      { model: Airports, as: "StartAirport" },
+      { model: Airports, as: "EndAirport" },
     ],
   });
 

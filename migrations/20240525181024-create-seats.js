@@ -8,7 +8,7 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.UUID,
             },
-            ticketId: {
+            flightId: {
                 allowNull: false,
                 type: Sequelize.UUID,
             },

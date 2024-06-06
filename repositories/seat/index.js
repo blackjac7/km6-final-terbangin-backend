@@ -3,14 +3,13 @@ const { Tickets,Flights , Seats, Airlines, Airports } = require("../../models");
 exports.getSeats = async () => {
   const data = await Seats.findAll({
     include: {
-      model: Tickets,
+      model: Flights,
       include: [
         {
           model: Airlines,
         },
-        {
-          model: Airports,
-        },
+        { model: Airports, as: "StartAirport" },
+        { model: Airports, as: "EndAirport" },
       ],
     },
   });
@@ -28,9 +27,8 @@ exports.getSeatbyId = async (id) => {
         {
           model: Airlines,
         },
-        {
-          model: Airports,
-        },
+        { model: Airports, as: "StartAirport" },
+        { model: Airports, as: "EndAirport" },
       ],
     },
   });
@@ -41,10 +39,10 @@ exports.getSeatbyId = async (id) => {
   return "data tidak ditemukan";
 };
 
-exports.getSeatbyTicket = async (id) => {
+exports.getSeatbyFlight = async (id) => {
   const data = await Seats.findAll({
     where: {
-      ticketId:id,
+      flightId: id,
     },
     include: {
       model: Flights,
@@ -52,9 +50,8 @@ exports.getSeatbyTicket = async (id) => {
         {
           model: Airlines,
         },
-        {
-          model: Airports,
-        }
+        { model: Airports, as: "StartAirport" },
+        { model: Airports, as: "EndAirport" },
       ],
     },
   });
@@ -88,9 +85,8 @@ exports.updateSeat = async (id, payload) => {
         {
           model: Airlines,
         },
-        {
-          model: Airports,
-        },
+        { model: Airports, as: "StartAirport" },
+        { model: Airports, as: "EndAirport" },
       ],
     },
   });
@@ -105,9 +101,9 @@ exports.deleteSeat = async (id) => {
   return null;
 };
 
-exports.deleteSeatbyTicket = async (id) => {
+exports.deleteSeatbyFlight = async (id) => {
   // delete from postgres
-  await Seats.destroy({ where: { ticketId: id } });
+  await Seats.destroy({ where: { flightId: id } });
 
   return null;
 };

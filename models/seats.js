@@ -14,8 +14,8 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       });
-      Seats.belongsTo(models.Tickets, {
-        foreignKey: "ticketId",
+      Seats.belongsTo(models.Flights, {
+        foreignKey: "flightId",
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       });
@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
               primaryKey: true,
               type: DataTypes.UUID,
           },
-          ticketId: {
+          flightId: {
               allowNull: false,
               type: DataTypes.UUID,
           },

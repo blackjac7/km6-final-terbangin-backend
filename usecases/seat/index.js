@@ -10,8 +10,8 @@ exports.getSeatbyId = async (id) => {
   return data;
 };
 
-exports.getSeatbyTicket = async (id) => {
-  const data = await seatRepo.getSeatbyTicket(id);
+exports.getSeatbyFlight = async (id) => {
+  const data = await seatRepo.getSeatbyFlight(id);
   return data;
 };
 
@@ -29,7 +29,7 @@ exports.deleteSeat = async (id) => {
   const data = await seatRepo.deleteSeat(id);
   return data;
 };
-exports.deleteSeatbyTicket = async (id) => {
-  const data = await seatRepo.deleteSeatbyTicket(id);
+exports.deleteSeatbyFlight = async (id) => {
+  const data = await seatRepo.deleteSeatbyFlight(id);
   return data;
 };

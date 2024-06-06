@@ -3,9 +3,9 @@ const router = express.Router();
 const seatController = require("../../controllers/seat");
 
 router
-  .route("/seat-with-ticket-id/:id") 
-  .get(seatController.getSeatbyTicket)
-  .delete(seatController.deleteSeatbyTicket)
+  .route("/seat-with-flight-id/:id") 
+  .get(seatController.getSeatbyFlight)
+  .delete(seatController.deleteSeatbyFlight)
 
 router
   .route("/")

@@ -42,73 +42,87 @@ exports.createFlight = async (req, res, next) => {
       duration,
       startAirportId,
       endAirportId,
-      capacity,
       departureAt,
       arrivalAt,
       priceEconomy,
       priceBussines,
       priceFirstClass,
+      capacityEconomy,
+      capacityBussines,
+      capacityFirstClass,
     } = req.body;
     if (!airlineId || airlineId == "") {
       return next({
         message: "Airline id must be provided!",
         statusCode: 400,
       });
-    }
+    };
     if (!duration || duration == "") {
       return next({
         message: "Duration must be provided!",
         statusCode: 400,
       });
-    }
+    };
     if (!startAirportId || startAirportId == "") {
       return next({
         message: "startAirportId must be provided!",
         statusCode: 400,
       });
-    }
+    };
     if (!endAirportId || endAirportId == "") {
       return next({
         message: "endAirportId must be provided!",
         statusCode: 400,
       });
-    }
-    if (!capacity || capacity == "") {
-      return next({
-        message: "capacity must be provided!",
-        statusCode: 400,
-      });
-    }
+    };
     if (!departureAt || departureAt == "") {
       return next({
         message: "departureAt must be provided!",
         statusCode: 400,
       });
-    }
+    };
     if (!arrivalAt || arrivalAt == "") {
       return next({
         message: "arrivalAt must be provided!",
         statusCode: 400,
       });
-    }
+    };
     if (!priceEconomy || priceEconomy == "") {
       return next({
         message: "priceEconomy must be provided!",
         statusCode: 400,
       });
-    }
+    };
     if (!priceBussines || priceBussines == "") {
       return next({
         message: "priceBussines must be provided!",
         statusCode: 400,
       });
-    }
+    };
     if (!priceFirstClass || priceFirstClass == "") {
       return next({
         message: "priceFirstClass must be provided!",
         statusCode: 400,
       });
-    }
+    };
+    if (!capacityFirstClass || capacityFirstClass == "") {
+      return next({
+        message: "capacityFirstClass must be provided!",
+        statusCode: 400,
+      });
+    };
+    if (!capacityEconomy || capacityEconomy == "") {
+      return next({
+        message: "capacityEconomy must be provided!",
+        statusCode: 400,
+      });
+    };
+    if (!capacityBussines || capacityBussines == "") {
+      return next({
+        message: "capacityBussines must be provided!",
+        statusCode: 400,
+      });
+    };
 
     const data = await flightusecase.createFlight({
       id,
@@ -116,12 +130,14 @@ exports.createFlight = async (req, res, next) => {
       duration,
       startAirportId,
       endAirportId,
-      capacity,
       departureAt,
       arrivalAt,
       priceEconomy,
       priceBussines,
       priceFirstClass,
+      capacityEconomy,
+      capacityBussines,
+      capacityFirstClass,
     });
 
     res.status(201).json({
@@ -141,12 +157,14 @@ exports.updateFlight = async (req, res, next) => {
       duration,
       startAirportId,
       endAirportId,
-      capacity,
       departureAt,
       arrivalAt,
       priceEconomy,
       priceBussines,
       priceFirstClass,
+      capacityEconomy,
+      capacityBussines,
+      capacityFirstClass,
     } = req.body;
 
     if (!airlineId || airlineId == "") {
@@ -170,12 +188,6 @@ exports.updateFlight = async (req, res, next) => {
     if (!endAirportId || endAirportId == "") {
       return next({
         message: "endAirportId must be provided!",
-        statusCode: 400,
-      });
-    }
-    if (!capacity || capacity == "") {
-      return next({
-        message: "capacity must be provided!",
         statusCode: 400,
       });
     }
@@ -209,17 +221,38 @@ exports.updateFlight = async (req, res, next) => {
         statusCode: 400,
       });
     }
+    if (!capacityFirstClass || capacityFirstClass == "") {
+      return next({
+        message: "capacityFirstClass must be provided!",
+        statusCode: 400,
+      });
+    }
+    if (!capacityEconomy || capacityEconomy == "") {
+      return next({
+        message: "capacityEconomy must be provided!",
+        statusCode: 400,
+      });
+    }
+    if (!capacityBussines || capacityBussines == "") {
+      return next({
+        message: "capacityBussines must be provided!",
+        statusCode: 400,
+      });
+    }
+
     const data = await flightusecase.updateFlight(id, {
       airlineId,
       duration,
       startAirportId,
       endAirportId,
-      capacity,
       departureAt,
       arrivalAt,
       priceEconomy,
       priceBussines,
       priceFirstClass,
+      capacityEconomy,
+      capacityBussines,
+      capacityFirstClass,
     });
 
     res.status(201).json({

@@ -34,10 +34,10 @@ exports.getSeatbyId = async (req, res, next) => {
   }
 };
 
-exports.getSeatbyTicket = async (req, res, next) => {
+exports.getSeatbyFlight = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const data = await seatUsecase.getSeatbyTicket(id);
+    const data = await seatUsecase.getSeatbyFlight(id);
     if (!data) {
       return next({
         message: `Seat with ticket-id:${id} is not found!`,
@@ -57,38 +57,38 @@ exports.getSeatbyTicket = async (req, res, next) => {
 exports.createSeat = async (req, res, next) => {
   try {
     const id = uuidv4();
-    const { ticketId, seatNumber, airlineClass, isAvailable } = req.body;
-    if (!ticketId || ticketId == "") {
+    const { flightId, seatNumber, airlineClass, isAvailable } = req.body;
+    if (!flightId || flightId == "") {
       return next({
-        message: "Ticket id must be provided!",
+        message: "flight id must be provided!",
         statusCode: 400,
       });
-    };
+    }
     if (!seatNumber || seatNumber == "") {
       return next({
         message: "seat Number must be provided!",
         statusCode: 400,
       });
-    };
+    }
     if (!airlineClass || airlineClass == "") {
       return next({
         message: "airlineClass must be provided!",
         statusCode: 400,
       });
-    };
-    if (!isAvailable || isAvailable == "") {
+    }
+    if (!(isAvailable == false || isAvailable == true)) {
       return next({
         message: "status isAvailable must be provided!",
         statusCode: 400,
       });
-    };
+    }
 
     const data = await seatUsecase.createSeat({
       id,
-      ticketId,
+      flightId,
       seatNumber,
       airlineClass,
-      isAvailable
+      isAvailable,
     });
 
     res.status(201).json({
@@ -102,34 +102,34 @@ exports.createSeat = async (req, res, next) => {
 exports.updateSeat = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { ticketId, seatNumber, airlineClass, isAvailable } = req.body;
-    if (!ticketId || ticketId == "") {
+    const { flightId, seatNumber, airlineClass, isAvailable } = req.body;
+    if (!flightId || flightId == "") {
       return next({
-        message: "Ticket id must be provided!",
+        message: "Flight id must be provided!",
         statusCode: 400,
       });
-    };
+    }
     if (!seatNumber || seatNumber == "") {
       return next({
         message: "seat Number must be provided!",
         statusCode: 400,
       });
-    };
+    }
     if (!airlineClass || airlineClass == "") {
       return next({
         message: "airlineClass must be provided!",
         statusCode: 400,
       });
-    };
-    if (!isAvailable || isAvailable == "") {
+    }
+    if (!(isAvailable == false || isAvailable == true)) {
       return next({
         message: "status isAvailable must be provided!",
         statusCode: 400,
       });
-    };
+    }
 
     const data = await seatUsecase.updateSeat(id, {
-      ticketId,
+      flightId,
       seatNumber,
       airlineClass,
       isAvailable,
@@ -157,10 +157,10 @@ exports.deleteSeat = async (req, res, next) => {
     next(error);
   }
 };
-exports.deleteSeatbyTicket = async (req, res, next) => {
+exports.deleteSeatbyFlight = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const data = await seatUsecase.deleteSeatbyTicket(id);
+    const data = await seatUsecase.deleteSeatbyFlight(id);
 
     res.status(200).json({
       message: "Successs",
