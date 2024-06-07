@@ -24,11 +24,6 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       });
-      Bookings.belongsTo(models.Tickets, {
-        foreignKey: "ticketId",
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE",
-      });
       Bookings.belongsTo(models.Payments, {
         foreignKey: "paymentId",
         onDelete: "CASCADE",
@@ -37,33 +32,33 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Bookings.init(
-      {
-          id: {
-              allowNull: false,
-              primaryKey: true,
-              type: DataTypes.UUID,
-          },
-          userId: {
-              allowNull: false,
-              type: DataTypes.UUID,
-          },
-          ticketId: {
-              allowNull: false,
-              type: DataTypes.UUID,
-          },
-          paymentId: {
-              allowNull: false,
-              type: DataTypes.UUID,
-          },
-          deletedAt: {
-              type: DataTypes.DATE,
-          },
+    {
+      id: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.UUID,
       },
-      {
-          sequelize,
-          modelName: "Bookings",
-          paranoid: true,
-      }
+      userId: {
+        allowNull: false,
+        type: DataTypes.UUID,
+      },
+      paymentId: {
+        allowNull: false,
+        type: DataTypes.UUID,
+      },
+      status: {
+        defaultValue: "One Way",
+        type: DataTypes.ENUM("One Way", "Return"),
+      },
+      deletedAt: {
+        type: DataTypes.DATE,
+      },
+    },
+    {
+      sequelize,
+      modelName: "Bookings",
+      paranoid: true,
+    }
   );
   return Bookings;
 };
