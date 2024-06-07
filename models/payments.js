@@ -31,15 +31,18 @@ module.exports = (sequelize, DataTypes) => {
           type: DataTypes.DATE,
         },
         status: {
-          defaultValue: "ISSUED",
+          defaultValue: "UNPAID",
           type: DataTypes.ENUM("ISSUED", "UNPAID", "CANCELLED"),
         },
         method: {
           allowNull: false,
           type: DataTypes.STRING,
         },
-        link: {
-          type: DataTypes.STRING,
+        snapLink: {
+          type: DataTypes.TEXT,
+        },
+        snapToken: {
+          type: DataTypes.TEXT,
         },
         totalPrice: {
           allowNull: false,

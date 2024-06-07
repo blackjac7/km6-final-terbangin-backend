@@ -1,5 +1,6 @@
 const paymentRepo = require("../../repositories/payment/index");
 const paymentUtils = require("./utils");
+const midtrans = require("./midtrans");
 const HttpError = require("../../utils/HttpError");
 const { PaymentStatus } = require("../../utils/constants");
 const { v4: uuidv4 } = require("uuid");
@@ -80,6 +81,9 @@ exports.addPayment = async (payload) => {
         userId: user.id,
         expire: paymentUtils.calculateExpiryDate(),
     };
+    const midtransPayment = await midtrans.generateMidtransPayment(payload);
+    const { token, redirect_url: link } = midtransPayment;
+    payload = { ...payload, link, token };
 
     return paymentRepo.addPayment(payload);
 };
@@ -89,10 +93,7 @@ exports.updatePaymentById = async (id, payload) => {
     const toBeUpdated = await this.getPaymentById(id, user);
 
     // payment yg statusnya issued atau cancelled udah ga bisa di-update lagi
-    if (
-        toBeUpdated.status === PaymentStatus.ISSUED ||
-        toBeUpdated.status === PaymentStatus.CANCELLED
-    ) {
+    if (toBeUpdated.status !== PaymentStatus.UNPAID) {
         return toBeUpdated;
     }
     return paymentRepo.updatePaymentById(id, {
