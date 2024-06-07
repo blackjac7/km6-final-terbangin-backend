@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const profileRoutes = require("./profile");
-const ticketRoutes = require("./ticket");
 const airlineRoutes = require("./airline");
+const airportRoutes = require("./airport");
 const authRoutes = require("./auth");
 const flightRoutes = require("./flight");
 const seatRoutes = require("./seat");
@@ -15,6 +15,8 @@ router.use("/flight", flightRoutes);
 router.use("/seat", seatRoutes);
 
 router.use("/airline", airlineRoutes);
+
+router.use("/airport", airportRoutes);
 
 router.use("/auth", authRoutes);
 
