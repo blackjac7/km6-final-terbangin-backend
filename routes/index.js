@@ -3,12 +3,16 @@ const profileRoutes = require("./profile");
 const ticketRoutes = require("./ticket");
 const airlineRoutes = require("./airline");
 const authRoutes = require("./auth");
+const flightRoutes = require("./flight");
+const seatRoutes = require("./seat");
 const verificationRoutes = require("./verification");
 const { authMiddleware } = require("../middlewares/auth");
 
 router.use("/profile", authMiddleware, profileRoutes);
 
-router.use("/ticket", ticketRoutes);
+router.use("/flight", flightRoutes);
+
+router.use("/seat", seatRoutes);
 
 router.use("/airline", airlineRoutes);
 

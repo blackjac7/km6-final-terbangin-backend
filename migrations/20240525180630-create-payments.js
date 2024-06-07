@@ -27,6 +27,9 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.INTEGER,
             },
+            link:{
+                type: Sequelize.STRING,
+            },
             deletedAt: {
                 type: Sequelize.DATE,
             },

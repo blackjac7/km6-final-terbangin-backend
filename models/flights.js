@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Flights.hasMany(models.Tickets, {
+      Flights.hasMany(models.Seats, {
         foreignKey: "flightId",
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
@@ -23,11 +23,13 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "startAirportId",
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
+        as: "StartAirport",
       });
       Flights.belongsTo(models.Airports, {
         foreignKey: "endAirportId",
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
+        as: "EndAirport",
       });
     }
   }
@@ -53,8 +55,16 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.UUID,
       },
-      capacity: {
-        allowNull: false,
+      capacityEconomy: {
+        allowNull: true,
+        type: DataTypes.INTEGER,
+      },
+      capacityBussines: {
+        allowNull: true,
+        type: DataTypes.INTEGER,
+      },
+      capacityFirstClass: {
+        allowNull: true,
         type: DataTypes.INTEGER,
       },
       priceEconomy: {
