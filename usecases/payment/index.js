@@ -82,8 +82,8 @@ exports.addPayment = async (payload) => {
         expire: paymentUtils.calculateExpiryDate(),
     };
     const midtransPayment = await midtrans.generateMidtransPayment(payload);
-    const { token, redirect_url: link } = midtransPayment;
-    payload = { ...payload, link, token };
+    const { snapToken, redirect_url: snapLink } = midtransPayment;
+    payload = { ...payload, snapLink, snapToken };
 
     return paymentRepo.addPayment(payload);
 };
