@@ -8,6 +8,7 @@ const flightRoutes = require("./flight");
 const seatRoutes = require("./seat");
 const helperBookingRoutes = require("./helperBooking");
 const verificationRoutes = require("./verification");
+const paymentRoutes = require("./payment");
 const { authMiddleware } = require("../middlewares/auth");
 
 router.use("/auth", authRoutes);
@@ -27,5 +28,7 @@ router.use("/airport", airportRoutes);
 router.use("/helper-booking", authMiddleware, helperBookingRoutes);
 
 router.use("/verification", verificationRoutes);
+
+router.use("/payment", authMiddleware, paymentRoutes);
 
 module.exports = router;
