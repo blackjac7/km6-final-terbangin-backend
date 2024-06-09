@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: true,
                 type: DataTypes.TEXT,
             },
-            phonenumber: {
+            phoneNumber: {
                 allowNull: true,
                 type: DataTypes.TEXT,
             },

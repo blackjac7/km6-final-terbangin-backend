@@ -10,7 +10,6 @@ const {
 } = require("../../repositories/user");
 const generate = require("./utils");
 const template = require("../../helpers/templateHTML");
-const formatPhoneNumber = require("../../helpers/formatPhoneNumber");
 
 exports.generateOTPEmail = async (email) => {
     const user = await findUserByEmail(email);
@@ -100,7 +99,6 @@ exports.generateOTPSMS = async (phoneNumber) => {
 };
 
 exports.verifyOTP = async (email, phoneNumber, otp) => {
-    // const formattedPhoneNumber = formatPhoneNumber(phoneNumber); // format phoneNumber masih proses
     const formattedPhoneNumber = phoneNumber;
 
     let whereCondition = {
