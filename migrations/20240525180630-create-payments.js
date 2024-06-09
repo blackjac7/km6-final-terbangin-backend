@@ -16,7 +16,7 @@ module.exports = {
                 type: Sequelize.DATE,
             },
             status: {
-                defaultValue: "ISSUED",
+                defaultValue: "UNPAID",
                 type: Sequelize.ENUM("ISSUED", "UNPAID", "CANCELLED"),
             },
             method: {
@@ -26,6 +26,12 @@ module.exports = {
             totalPrice: {
                 allowNull: false,
                 type: Sequelize.INTEGER,
+            },
+            snapLink: {
+                type: Sequelize.TEXT,
+            },
+            snapToken: {
+                type: Sequelize.TEXT,
             },
             deletedAt: {
                 type: Sequelize.DATE,

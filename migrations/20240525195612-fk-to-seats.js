@@ -3,15 +3,15 @@
 module.exports = {
     async up(queryInterface, Sequelize) {
         await queryInterface.addConstraint("Seats", {
-            fields: ["ticketId"],
-            type: "foreign key",
-            name: "fk-to-seats",
-            references: {
-                table: "Tickets",
-                field: "id",
-            },
-            onDelete: "CASCADE",
-            onUpdate: "CASCADE",
+          fields: ["flightId"],
+          type: "foreign key",
+          name: "fk-to-seats",
+          references: {
+            table: "Flights",
+            field: "id",
+          },
+          onDelete: "CASCADE",
+          onUpdate: "CASCADE",
         });
     },
 

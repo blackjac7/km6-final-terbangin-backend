@@ -1,9 +1,8 @@
 const userRepo = require("../../repositories/user");
-const HttpError = require("../../middlewares/HttpError");
+const HttpError = require("../../utils/HttpError");
 
 exports.getProfileById = async (id) => {
     const data = await userRepo.getUserById(id);
-    console.log(data);
 
     if (!data) {
         throw new HttpError({
@@ -12,7 +11,7 @@ exports.getProfileById = async (id) => {
         });
     }
     return data;
-}
+};
 
 exports.getProfileByEmail = async (email) => {
     const data = await userRepo.getUserByEmail(email);
@@ -24,7 +23,7 @@ exports.getProfileByEmail = async (email) => {
         });
     }
     return data;
-}
+};
 
 exports.getProfileByPhoneNumber = async (phoneNumber) => {
     const data = await userRepo.getUserByPhoneNumber(phoneNumber);
@@ -36,7 +35,7 @@ exports.getProfileByPhoneNumber = async (phoneNumber) => {
         });
     }
     return data;
-}
+};
 
 exports.updateProfileById = async (id, payload) => {
     const data = await userRepo.updateUserById(id, payload);
@@ -48,7 +47,7 @@ exports.updateProfileById = async (id, payload) => {
         });
     }
     return data;
-}
+};
 
 exports.deleteProfileById = async (id) => {
     const data = await userRepo.deleteUserById(id);
@@ -60,4 +59,4 @@ exports.deleteProfileById = async (id) => {
         });
     }
     return data;
-}
+};

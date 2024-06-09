@@ -17,40 +17,46 @@ module.exports = (sequelize, DataTypes) => {
         }
     }
     Payments.init(
-        {
-            id: {
-                allowNull: false,
-                primaryKey: true,
-                type: DataTypes.UUID,
-            },
-            userId: {
-                allowNull: false,
-                type: DataTypes.UUID,
-            },
-            expire: {
-                type: DataTypes.DATE,
-            },
-            status: {
-                defaultValue: "ISSUED",
-                type: DataTypes.ENUM("ISSUED", "UNPAID", "CANCELLED"),
-            },
-            method: {
-                allowNull: false,
-                type: DataTypes.STRING,
-            },
-            totalPrice: {
-                allowNull: false,
-                type: DataTypes.INTEGER,
-            },
-            deletedAt: {
-                type: DataTypes.DATE,
-            },
+      {
+        id: {
+          allowNull: false,
+          primaryKey: true,
+          type: DataTypes.UUID,
         },
-        {
-            sequelize,
-            modelName: "Payments",
-            paranoid: true,
-        }
+        userId: {
+          allowNull: false,
+          type: DataTypes.UUID,
+        },
+        expire: {
+          type: DataTypes.DATE,
+        },
+        status: {
+          defaultValue: "UNPAID",
+          type: DataTypes.ENUM("ISSUED", "UNPAID", "CANCELLED"),
+        },
+        method: {
+          allowNull: false,
+          type: DataTypes.STRING,
+        },
+        snapLink: {
+          type: DataTypes.TEXT,
+        },
+        snapToken: {
+          type: DataTypes.TEXT,
+        },
+        totalPrice: {
+          allowNull: false,
+          type: DataTypes.INTEGER,
+        },
+        deletedAt: {
+          type: DataTypes.DATE,
+        },
+      },
+      {
+        sequelize,
+        modelName: "Payments",
+        paranoid: true,
+      }
     );
     return Payments;
 };
