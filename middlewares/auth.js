@@ -3,6 +3,13 @@ const { getProfileById } = require("../usecases/profile");
 
 exports.authMiddleware = async (req, res, next) => {
     try {
+        if (!req?.headers?.authorization) {
+            return next({
+                message: "Unauthorized!",
+                statusCode: 401,
+            });
+        }
+
         const token = getTokenFromHeaders(req?.headers);
 
         const extractedToken = extractToken(token);
