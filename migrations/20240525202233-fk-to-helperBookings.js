@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.addConstraint("helperBookings", {
+        await queryInterface.addConstraint("HelperBookings", {
             fields: ["passangerId"],
             type: "foreign key",
             name: "fk-to-helperBookings-passangerId",
@@ -13,7 +13,7 @@ module.exports = {
             onDelete: "CASCADE",
             onUpdate: "CASCADE",
         });
-        await queryInterface.addConstraint("helperBookings", {
+        await queryInterface.addConstraint("HelperBookings", {
             fields: ["bookingId"],
             type: "foreign key",
             name: "fk-to-helperBookings-bookingId",
@@ -24,7 +24,7 @@ module.exports = {
             onDelete: "CASCADE",
             onUpdate: "CASCADE",
         });
-        await queryInterface.addConstraint("helperBookings", {
+        await queryInterface.addConstraint("HelperBookings", {
             fields: ["seatId"],
             type: "foreign key",
             name: "fk-to-helperBookings-seatId",
@@ -39,15 +39,15 @@ module.exports = {
 
     async down(queryInterface, Sequelize) {
         await queryInterface.removeConstraint(
-            "helperBookings",
+            "HelperBookings",
             "fk-to-helperBookings-passangerId"
         );
         await queryInterface.removeConstraint(
-            "helperBookings",
+            "HelperBookings",
             "fk-to-helperBookings-bookingId"
         );
         await queryInterface.removeConstraint(
-            "helperBookings",
+            "HelperBookings",
             "fk-to-helperBookings-seatId"
         );
     },

@@ -12,7 +12,7 @@ module.exports = {
                 allowNull: true,
                 type: Sequelize.TEXT,
             },
-            phonenumber: {
+            phoneNumber: {
                 allowNull: true,
                 type: Sequelize.TEXT,
             },
