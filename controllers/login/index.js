@@ -33,7 +33,7 @@ exports.login = async (req, res, next) => {
 exports.googleLogin = async (req, res, next) => {
   try {
     // get the body
-    const { access_token } = req.body;
+    const { access_token } = req?.body;
 
     if (!access_token) {
       return next({

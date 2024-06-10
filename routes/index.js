@@ -8,7 +8,9 @@ const flightRoutes = require("./flight");
 const seatRoutes = require("./seat");
 const helperBookingRoutes = require("./helperBooking");
 const verificationRoutes = require("./verification");
+const notificationRoutes = require("./notification")
 const paymentRoutes = require("./payment");
+const bookingRoutes = require("./booking");
 const { authMiddleware } = require("../middlewares/auth");
 
 router.use("/auth", authRoutes);
@@ -16,6 +18,8 @@ router.use("/auth", authRoutes);
 router.use("/profile", authMiddleware, profileRoutes);
 
 router.use("/passanger", authMiddleware, passangerRoutes);
+
+router.use("/booking", authMiddleware, bookingRoutes);
 
 router.use("/flight", flightRoutes);
 
@@ -29,6 +33,7 @@ router.use("/helper-booking", authMiddleware, helperBookingRoutes);
 
 router.use("/verification", verificationRoutes);
 
+router.use("/notification", notificationRoutes);
 router.use("/payment", authMiddleware, paymentRoutes);
 
 module.exports = router;
