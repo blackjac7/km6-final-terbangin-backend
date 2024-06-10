@@ -9,6 +9,7 @@ const seatRoutes = require("./seat");
 const helperBookingRoutes = require("./helperBooking");
 const verificationRoutes = require("./verification");
 const paymentRoutes = require("./payment");
+const bookingRoutes = require("./booking");
 const { authMiddleware } = require("../middlewares/auth");
 
 router.use("/auth", authRoutes);
@@ -16,6 +17,8 @@ router.use("/auth", authRoutes);
 router.use("/profile", authMiddleware, profileRoutes);
 
 router.use("/passanger", authMiddleware, passangerRoutes);
+
+router.use("/booking", authMiddleware, bookingRoutes);
 
 router.use("/flight", flightRoutes);
 
