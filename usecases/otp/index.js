@@ -51,7 +51,7 @@ exports.generateOTPEmail = async (email) => {
 };
 
 exports.generateOTPSMS = async (phoneNumber) => {
-    const formattedPhoneNumber = formatPhoneNumber(phoneNumber);
+    const formattedPhoneNumber = phoneNumber;
     const user = await findUserByPhoneNumber(formattedPhoneNumber);
 
     if (user) {

@@ -33,7 +33,13 @@ exports.getUserById = async (id) => {
 };
 
 exports.getUserByEmail = async (email) => {
-    return Users.findOne({ where: { email } });
+    const opt = {
+        where: { email },
+        attributes: {
+            include: ["password"],
+        },
+    };
+    return Users.findOne(opt);
 };
 
 exports.getUserByPhoneNumber = async (phoneNumber) => {
