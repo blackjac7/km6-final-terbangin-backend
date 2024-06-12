@@ -4,11 +4,22 @@ const isUUID = require("../../helpers/isUUID");
 
 exports.getFlights = async (req, res, next) => {
   try {
-    let { key, value, filter, order } = req.query;
+    const data = await flightusecase.getFlights();
+
+    res.status(200).json({
+      message: "Successs",
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getFlightsbyFilter = async (req, res, next) => {
+  try {
+    let { key, value, filter, order, start, end } = req.query;
     const list = [
-      "airlineId",
-      "startAirportId",
-      "endAirportId",
+      "flightCode",
       "priceEconomy",
       "priceBussines",
       "priceFirstClass",
@@ -16,6 +27,22 @@ exports.getFlights = async (req, res, next) => {
       "arrivalAt",
       "duration",
     ];
+
+    const listuuidtable = ["airlineId", "startAirportId", "endAirportId"];
+
+    if (!start || start == "") {
+      return next({
+        message: "start city cannot be empty",
+        statusCode: 400,
+      });
+    }
+
+    if (!end || end == "") {
+      return next({
+        message: "end city cannot be empty",
+        statusCode: 400,
+      });
+    }
 
     if (!filter) {
       filter = "priceEconomy";
@@ -37,7 +64,7 @@ exports.getFlights = async (req, res, next) => {
       });
     }
 
-    if (list.includes(key)) {
+    if (listuuidtable.includes(key)) {
       if (!isUUID(value)) {
         return next({
           statusCode: 400,
@@ -46,7 +73,14 @@ exports.getFlights = async (req, res, next) => {
       }
     }
 
-    const data = await flightusecase.getFlights(key, value, filter, order);
+    const data = await flightusecase.getFlightsbyFilter(
+      key,
+      value,
+      filter,
+      order,
+      start,
+      end
+    );
 
     res.status(200).json({
       message: "Successs",
@@ -209,6 +243,33 @@ exports.createFlight = async (req, res, next) => {
   }
 };
 
+exports.decrementFlightCapacity = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { seatclass, value } = req.body;
+
+    if (!isUUID(id)) {
+      return next({
+        statusCode: 400,
+        message: "userId must be a valid UUID",
+      });
+    }
+
+    const data = await flightusecase.decrementFlightCapacity(
+      seatclass,
+      value,
+      id
+    );
+
+    res.status(200).json({
+      message: "Successs",
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 exports.updateFlight = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -329,6 +390,13 @@ exports.updateFlight = async (req, res, next) => {
       capacityFirstClass,
     });
 
+    if (!data) {
+      return next({
+        message: `Flight with this id :${id} is not found!`,
+        statusCode: 404,
+      });
+    }
+
     res.status(201).json({
       message: "Successs",
       data,
@@ -348,6 +416,13 @@ exports.deleteFlight = async (req, res, next) => {
       });
     }
     const data = await flightusecase.deleteFlight(id);
+
+    if (!data) {
+      return next({
+        message: `Flight with this id :${id} is not found!`,
+        statusCode: 404,
+      });
+    }
 
     res.status(200).json({
       message: "Successs",

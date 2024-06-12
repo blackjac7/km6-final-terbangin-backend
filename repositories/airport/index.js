@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require("uuid");
 const uploader = require("../../helpers/cloudinary");
 
 exports.getAirports = async () => {
-  const data = await Airports.findAll({});
+  const data = await Airports.findAll();
   return data;
 };
 
