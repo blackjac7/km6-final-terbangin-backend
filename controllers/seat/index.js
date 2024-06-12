@@ -1,5 +1,6 @@
 const seatUsecase = require("../../usecases/seat/index");
 const { v4: uuidv4 } = require("uuid");
+const isUUID = require("../../helpers/isUUID");
 
 exports.getSeats = async (req, res, next) => {
   try {
@@ -17,11 +18,17 @@ exports.getSeats = async (req, res, next) => {
 exports.getSeatbyId = async (req, res, next) => {
   try {
     const { id } = req.params;
+    if (!isUUID(id)) {
+      return next({
+        statusCode: 400,
+        message: "userId must be a valid UUID",
+      });
+    }
     const data = await seatUsecase.getSeatbyId(id);
     if (!data) {
       return next({
         message: `Seat with id ${id} is not found!`,
-        statusCode: 404,
+        statusCode: 400,
       });
     }
 
@@ -41,7 +48,7 @@ exports.getSeatbyFlight = async (req, res, next) => {
     if (!data) {
       return next({
         message: `Seat with ticket-id:${id} is not found!`,
-        statusCode: 404,
+        statusCode: 400,
       });
     }
 
@@ -102,6 +109,12 @@ exports.createSeat = async (req, res, next) => {
 exports.updateSeat = async (req, res, next) => {
   try {
     const { id } = req.params;
+    if (!isUUID(id)) {
+      return next({
+        statusCode: 400,
+        message: "userId must be a valid UUID",
+      });
+    }
     const { flightId, seatNumber, airlineClass, isAvailable } = req.body;
     if (!flightId || flightId == "") {
       return next({
@@ -147,6 +160,12 @@ exports.updateSeat = async (req, res, next) => {
 exports.deleteSeat = async (req, res, next) => {
   try {
     const { id } = req.params;
+    if (!isUUID(id)) {
+      return next({
+        statusCode: 400,
+        message: "userId must be a valid UUID",
+      });
+    }
     const data = await seatUsecase.deleteSeat(id);
 
     res.status(200).json({
@@ -160,6 +179,12 @@ exports.deleteSeat = async (req, res, next) => {
 exports.deleteSeatbyFlight = async (req, res, next) => {
   try {
     const { id } = req.params;
+    if (!isUUID(id)) {
+      return next({
+        statusCode: 400,
+        message: "userId must be a valid UUID",
+      });
+    }
     const data = await seatUsecase.deleteSeatbyFlight(id);
 
     res.status(200).json({

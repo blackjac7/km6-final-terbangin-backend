@@ -1,16 +1,38 @@
 const { Flights, Airlines, Airports } = require("../../models");
 
-exports.getFlights = async () => {
-  const data = await Flights.findAll({
-    include: [
-      {
-        model: Airlines,
+exports.getFlights = async (key, value, filter, order) => {
+  if (key && value) {
+    const data = await Flights.findAll({
+      order:[[filter , order]],
+      where: {
+        [key]: value,
       },
-      { model: Airports, as: "StartAirport" },
-      { model: Airports, as: "EndAirport" },
-    ],
-  });
-  return data;
+      include: [
+        {
+          model: Airlines,
+        },
+        { model: Airports, as: "StartAirport" },
+        { model: Airports, as: "EndAirport" },
+      ],
+    });
+
+  if (data.length) {
+    return data;
+  }
+  return "data tidak ditemukan";
+  } else {
+    const data = await Flights.findAll({
+      order: [[filter, order]],
+      include: [
+        {
+          model: Airlines,
+        },
+        { model: Airports, as: "StartAirport" },
+        { model: Airports, as: "EndAirport" },
+      ],
+    });
+    return data;
+  }
 };
 
 exports.getFlightbyId = async (id) => {
