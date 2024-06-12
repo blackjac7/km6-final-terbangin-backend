@@ -32,4 +32,18 @@ exports.deleteNotification = async (id) => {
   return data;
 };
 
+exports.getNotifications = async () => {
+  const data = await NotificationRepository.getNotifications();
+  return data;
+};
+
+// Tambahan untuk mengupdate notifikasi berdasarkan userId
+exports.updateNotificationsByUserId = async (userId, payload) => {
+  const data = await NotificationRepository.updateNotificationsByUserId(
+    userId,
+    payload
+  );
+  return data;
+};
+
 
