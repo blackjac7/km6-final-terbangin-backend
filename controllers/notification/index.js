@@ -17,7 +17,7 @@ exports.getNotification = async (req, res, next) => {
     if (!data) {
       throw {
         statusCode: 404,
-        message: `Notification with id ${id} is not found!`,
+        message: `Notification with id is not found!`,
       };
     }
 
@@ -42,10 +42,10 @@ exports.getNotificationByUserId = async (req, res, next) => {
     }
 
     const data = await NotificationUseCase.getNotificationsByUserId(userId);
-    if (!data) {
+    if (!data || data.length === 0) {
       throw {
         statusCode: 404,
-        message: `Notifications for userId ${userId} are not found!`,
+        message: `Notifications for userId are not found!`,
       };
     }
 
@@ -72,10 +72,10 @@ exports.getNotificationByBookingId = async (req, res, next) => {
     const data = await NotificationUseCase.getNotificationsByBookingId(
       bookingId
     );
-    if (!data) {
+    if (!data || data.length === 0) {
       throw {
         statusCode: 404,
-        message: `Notifications for bookingId ${bookingId} are not found!`,
+        message: `Notifications for bookingId are not found!`,
       };
     }
 
@@ -180,6 +180,13 @@ exports.updateNotification = async (req, res, next) => {
       statusRead,
     });
 
+    if (!data) {
+      throw {
+        statusCode: 404,
+        message: `Notification with id ${id} not found!`,
+      };
+    }
+
     res.status(200).json({
       message: "Success",
       data,
@@ -188,6 +195,7 @@ exports.updateNotification = async (req, res, next) => {
     next(error);
   }
 };
+
 
 exports.deleteNotification = async (req, res, next) => {
   try {
@@ -202,26 +210,10 @@ exports.deleteNotification = async (req, res, next) => {
 
     const data = await NotificationUseCase.deleteNotification(id);
 
-    res.status(200).json({
-      message: "Success",
-      data,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-exports.getNotificationsByStatusRead = async (req, res, next) => {
-  try {
-    const { statusRead } = req.params;
-
-    const data = await NotificationUseCase.getNotificationsByStatusRead(
-      statusRead
-    );
     if (!data) {
       throw {
         statusCode: 404,
-        message: `Notifications with statusRead ${statusRead} are not found!`,
+        message: `Notification with notificationId is not found!`,
       };
     }
 
@@ -233,3 +225,66 @@ exports.getNotificationsByStatusRead = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.getNotifications = async (req, res, next) => {
+  try {
+    const data = await NotificationUseCase.getNotifications();
+
+    res.status(200).json({
+      message: "Success",
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Tambahan untuk mengupdate notifikasi berdasarkan userId
+exports.updateNotificationsByUserId = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const { bookingId, title, message, statusRead } = req.body;
+
+    if (!bookingId || !isUUID(bookingId)) {
+      throw {
+        statusCode: 400,
+        message: "BookingID must be provided and must be a valid UUID",
+      };
+    }
+    if (!title || title.trim() === "") {
+      throw {
+        statusCode: 400,
+        message: "Title must be provided!",
+      };
+    }
+    if (!message || message.trim() === "") {
+      throw {
+        statusCode: 400,
+        message: "Message must be provided!",
+      };
+    }
+
+    const data = await NotificationUseCase.updateNotificationsByUserId(userId, {
+      bookingId,
+      title,
+      message,
+      statusRead,
+    });
+
+    if (!data || data.length === 0) {
+      throw {
+        statusCode: 404,
+        message: `Notification with userId are not found!`,
+      };
+    }
+
+    res.status(200).json({
+      message: "Success",
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
