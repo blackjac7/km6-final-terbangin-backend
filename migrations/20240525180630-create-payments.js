@@ -20,7 +20,6 @@ module.exports = {
                 type: Sequelize.ENUM("ISSUED", "UNPAID", "CANCELLED"),
             },
             method: {
-                allowNull: false,
                 type: Sequelize.STRING,
             },
             totalPrice: {
