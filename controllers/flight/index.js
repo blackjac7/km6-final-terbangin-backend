@@ -91,6 +91,7 @@ exports.createFlight = async (req, res, next) => {
     const id = uuidv4();
     const {
       airlineId,
+      flightCode,
       duration,
       startAirportId,
       endAirportId,
@@ -106,6 +107,12 @@ exports.createFlight = async (req, res, next) => {
     if (!airlineId || airlineId == "") {
       return next({
         message: "Airline id must be provided!",
+        statusCode: 400,
+      });
+    }
+    if (!flightCode || flightCode == "") {
+      return next({
+        message: "Flight code must be provided!",
         statusCode: 400,
       });
     }
@@ -179,6 +186,7 @@ exports.createFlight = async (req, res, next) => {
     const data = await flightusecase.createFlight({
       id,
       airlineId,
+      flightCode,
       duration,
       startAirportId,
       endAirportId,
@@ -212,6 +220,7 @@ exports.updateFlight = async (req, res, next) => {
     }
     const {
       airlineId,
+      flightCode,
       duration,
       startAirportId,
       endAirportId,
@@ -228,6 +237,12 @@ exports.updateFlight = async (req, res, next) => {
     if (!airlineId || airlineId == "") {
       return next({
         message: "Airline id must be provided!",
+        statusCode: 400,
+      });
+    }
+    if (!flightCode || flightCode == "") {
+      return next({
+        message: "Flight code must be provided!",
         statusCode: 400,
       });
     }
@@ -300,6 +315,7 @@ exports.updateFlight = async (req, res, next) => {
 
     const data = await flightusecase.updateFlight(id, {
       airlineId,
+      flightCode,
       duration,
       startAirportId,
       endAirportId,

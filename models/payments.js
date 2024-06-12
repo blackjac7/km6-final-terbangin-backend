@@ -17,46 +17,45 @@ module.exports = (sequelize, DataTypes) => {
         }
     }
     Payments.init(
-      {
-        id: {
-          allowNull: false,
-          primaryKey: true,
-          type: DataTypes.UUID,
+        {
+            id: {
+                allowNull: false,
+                primaryKey: true,
+                type: DataTypes.UUID,
+            },
+            userId: {
+                allowNull: false,
+                type: DataTypes.UUID,
+            },
+            expire: {
+                type: DataTypes.DATE,
+            },
+            status: {
+                defaultValue: "UNPAID",
+                type: DataTypes.ENUM("ISSUED", "UNPAID", "CANCELLED"),
+            },
+            method: {
+                type: DataTypes.STRING,
+            },
+            snapLink: {
+                type: DataTypes.TEXT,
+            },
+            snapToken: {
+                type: DataTypes.TEXT,
+            },
+            totalPrice: {
+                allowNull: false,
+                type: DataTypes.INTEGER,
+            },
+            deletedAt: {
+                type: DataTypes.DATE,
+            },
         },
-        userId: {
-          allowNull: false,
-          type: DataTypes.UUID,
-        },
-        expire: {
-          type: DataTypes.DATE,
-        },
-        status: {
-          defaultValue: "UNPAID",
-          type: DataTypes.ENUM("ISSUED", "UNPAID", "CANCELLED"),
-        },
-        method: {
-          allowNull: false,
-          type: DataTypes.STRING,
-        },
-        snapLink: {
-          type: DataTypes.TEXT,
-        },
-        snapToken: {
-          type: DataTypes.TEXT,
-        },
-        totalPrice: {
-          allowNull: false,
-          type: DataTypes.INTEGER,
-        },
-        deletedAt: {
-          type: DataTypes.DATE,
-        },
-      },
-      {
-        sequelize,
-        modelName: "Payments",
-        paranoid: true,
-      }
+        {
+            sequelize,
+            modelName: "Payments",
+            paranoid: true,
+        }
     );
     return Payments;
 };

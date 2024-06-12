@@ -10,6 +10,7 @@ exports.getNotification = async (id) => {
 };
 
 exports.getNotificationsByUserId = async (userId) => {
+  
   const data = await Notifications.findAll({
     where: { userId },
   });
@@ -17,6 +18,7 @@ exports.getNotificationsByUserId = async (userId) => {
 };
 
 exports.getNotificationsByBookingId = async (bookingId) => {
+
   const data = await Notifications.findAll({
     where: { bookingId },
   });
@@ -37,7 +39,26 @@ exports.updateNotification = async (id, payload) => {
   return data;
 };
 
+
 exports.deleteNotification = async (id) => {
-  await Notifications.destroy({ where: { id } });
+  await Notifications.destroy({ where: { id }, force: true });
   return null;
+};
+
+exports.getNotifications = async () => {
+  const data = await Notifications.findAll();
+  return data;
+};
+
+
+exports.updateNotificationsByUserId = async (userId, payload) => {
+
+  await Notifications.update(payload, {
+    where: { userId },
+  });
+
+  const data = await Notifications.findAll({
+    where: { userId },
+  });
+  return data;
 };
