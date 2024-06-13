@@ -1,4 +1,6 @@
 const { Flights, Airlines, Airports } = require("../../models");
+const moment = require("moment");
+const { Op } = require("sequelize");
 
 exports.getFlights = async () => {
   const data = await Flights.findAll({
@@ -21,66 +23,54 @@ exports.getFlights = async () => {
 };
 
 exports.getFlightsbyFilter = async (key, value, filter, order, start, end) => {
+  let whereClause = {};
+
   if (key && value) {
-    const data = await Flights.findAll({
-      order: [[filter, order]],
-      where: {
-        [key]: value,
-      },
-      include: [
-        {
-          model: Airlines,
-        },
-        {
-          model: Airports,
-          as: "StartAirport",
-          where: {
-            city: start,
-          },
-        },
-        {
-          model: Airports,
-          as: "EndAirport",
-          where: {
-            city: end,
-          },
-        },
-      ],
-    });
-
-    if (data.length) {
-      return data;
+    if (key === "departureAt") {
+      const startDate = moment(value).startOf("day").toDate();
+      const endDate = moment(value).endOf("day").toDate();
+      whereClause[key] = { [Op.between]: [startDate, endDate] };
+    } else {
+      whereClause[key] = value;
     }
-    return "data tidak ditemukan";
-  } else {
-    const data = await Flights.findAll({
-      order: [[filter, order]],
-      include: [
-        {
-          model: Airlines,
-        },
-        {
-          model: Airports,
-          as: "StartAirport",
-          where: {
-            city: start,
-          },
-        },
-        {
-          model: Airports,
-          as: "EndAirport",
-          where: {
-            city: end,
-          },
-        },
-      ],
-    });
-
-    if (data.length) {
-      return data;
-    }
-    return "data tidak ditemukan";
   }
+
+  const data = await Flights.findAll({
+    order: [[filter, order]],
+    where: whereClause,
+    include: [
+      {
+        model: Airlines,
+      },
+      {
+        model: Airports,
+        as: "StartAirport",
+        where: {
+          city: start,
+        },
+      },
+      {
+        model: Airports,
+        as: "EndAirport",
+        where: {
+          city: end,
+        },
+      },
+    ],
+  });
+
+  if (data.length) {
+    data.forEach((flight) => {
+      flight.dataValues.departureAt = moment(
+        flight.dataValues.departureAt
+      ).format("YYYY-MM-DD HH:mm:ss");
+      flight.dataValues.arrivalAt = moment(flight.dataValues.arrivalAt).format(
+        "YYYY-MM-DD HH:mm:ss"
+      );
+    });
+    return data;
+  }
+  return "data tidak ditemukan";
 };
 
 exports.getFlightbyId = async (id) => {
