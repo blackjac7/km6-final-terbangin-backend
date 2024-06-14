@@ -1,7 +1,16 @@
-const { Notifications } = require("../../models");
+const { Notifications, Users, Bookings } = require("../../models");
 
 exports.getNotification = async (id) => {
-  const data = await Notifications.findByPk(id);
+  const data = await Notifications.findByPk(id, {
+    include: [
+      {
+        model: Users,
+      },
+      {
+        model: Bookings,
+      },
+    ],
+  });
 
   if (data) {
     return data;
@@ -13,6 +22,14 @@ exports.getNotificationsByUserId = async (userId) => {
   
   const data = await Notifications.findAll({
     where: { userId },
+    include: [
+      {
+        model: Users,
+      },
+      {
+        model: Bookings,
+      },
+    ],
   });
   return data;
 };
@@ -21,6 +38,14 @@ exports.getNotificationsByBookingId = async (bookingId) => {
 
   const data = await Notifications.findAll({
     where: { bookingId },
+    include: [
+      {
+        model: Users,
+      },
+      {
+        model: Bookings,
+      },
+    ],
   });
   return data;
 };
