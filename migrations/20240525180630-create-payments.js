@@ -23,6 +23,9 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.INTEGER,
             },
+            expire: {
+                type: Sequelize.DATE,
+            },
             snapLink: {
                 type: Sequelize.TEXT,
             },
