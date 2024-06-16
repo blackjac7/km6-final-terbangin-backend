@@ -17,7 +17,7 @@ exports.getFlights = async (req, res, next) => {
 
 exports.getFlightsbyFilter = async (req, res, next) => {
   try {
-    let { key, value, filter, order, start, end } = req.query;
+    let { key, value, filter, order, start, end, seatType } = req.query;
     const list = [
       "flightCode",
       "priceEconomy",
@@ -73,14 +73,33 @@ exports.getFlightsbyFilter = async (req, res, next) => {
       }
     }
 
+    if (!seatType) {
+      seatType = "Economy";
+    }
+    const validTypes = ["Economy", "Bussines", "Firstclass"];
+    if (!validTypes.includes(seatType)) {
+      throw {
+        statusCode: 400,
+        message: "type must be one of Economy, Bussines, Firstclass",
+      };
+    }
+
     const data = await flightusecase.getFlightsbyFilter(
       key,
       value,
       filter,
       order,
       start,
-      end
+      end,
+      seatType
     );
+
+    if (!data) {
+      return next({
+        message: `Flight is not found!`,
+        statusCode: 400,
+      });
+    }
 
     res.status(200).json({
       message: "Successs",
