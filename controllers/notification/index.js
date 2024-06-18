@@ -271,7 +271,7 @@ exports.updateNotificationsByUserId = async (req, res, next) => {
       statusRead,
     });
 
-    if (!data || data.length === 0) {
+    if (!data) {
       throw {
         statusCode: 404,
         message: `Notification with userId are not found!`,
