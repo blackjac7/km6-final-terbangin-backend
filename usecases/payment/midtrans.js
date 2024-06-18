@@ -1,5 +1,5 @@
 const userRepo = require("../../repositories/user/index");
-const axios = require("axios");
+const midtrans = require("../../config/midtrans");
 const HttpError = require("../../utils/HttpError");
 
 /**
@@ -9,10 +9,7 @@ const HttpError = require("../../utils/HttpError");
  */
 exports.generateMidtransPayment = async (payment) => {
     const belongingUser = await userRepo.getUserById(payment.userId);
-    const currentDate = new Date();
-    const remainingHoursUntilExpiry =
-        (payment.expire - currentDate) / (1000 * 60 * 60);
-    const data = {
+    const parameters = {
         transaction_details: {
             order_id: payment.id,
             gross_amount: payment.totalPrice,
@@ -25,30 +22,20 @@ exports.generateMidtransPayment = async (payment) => {
             email: belongingUser.email,
             phone: belongingUser.phoneNumber,
         },
-        expiry: {
-            start_time: currentDate.toISOString(),
-            duration: remainingHoursUntilExpiry,
-            unit: "hours",
+        // untuk sementara, akan di-redirect ke link2 ini
+        callbacks: {
+            finish: "https://google.com/",
+            error: "https://example1.com",
         },
     };
-    const authString = btoa(`${process.env.MIDTRANS_SERVER_KEY}:`); // base-64 encoding
-
+    
     try {
-        const response = await axios.post(
-            process.env.MIDTRANS_SANDBOX_API,
-            data,
-            {
-                headers: {
-                    Accept: "application/json",
-                    Authorization: `Basic ${authString}`,
-                    "Content-Type": "application/json",
-                },
-            }
-        );
-        return response.data;
+        const response = await midtrans.createTransaction(parameters);
+        return response;
     } catch (e) {
         throw new HttpError({
-            message: e.error_message,
+            statusCode: e.httpStatusCode,
+            message: e.message,
         });
     }
 };

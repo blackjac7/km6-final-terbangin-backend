@@ -1,4 +1,4 @@
-const { Tickets,Flights , Seats, Airlines, Airports } = require("../../models");
+const { Flights , Seats, Airlines, Airports } = require("../../models");
 
 exports.getSeats = async () => {
   const data = await Seats.findAll({

@@ -38,6 +38,10 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: true,
                 type: DataTypes.UUID,
             },
+            bookingCode: {
+                allowNull: false,
+                type: DataTypes.STRING,
+            },
             userId: {
                 allowNull: false,
                 type: DataTypes.UUID,

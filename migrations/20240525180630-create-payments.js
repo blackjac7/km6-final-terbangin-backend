@@ -12,20 +12,19 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.UUID,
             },
-            expire: {
-                type: Sequelize.DATE,
-            },
             status: {
                 defaultValue: "UNPAID",
                 type: Sequelize.ENUM("ISSUED", "UNPAID", "CANCELLED"),
             },
             method: {
-                allowNull: false,
                 type: Sequelize.STRING,
             },
             totalPrice: {
                 allowNull: false,
                 type: Sequelize.INTEGER,
+            },
+            expire: {
+                type: Sequelize.DATE,
             },
             snapLink: {
                 type: Sequelize.TEXT,

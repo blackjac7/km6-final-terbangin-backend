@@ -1,4 +1,6 @@
 const { Flights, Airlines, Airports } = require("../../models");
+const moment = require("moment");
+const { Op } = require("sequelize");
 
 exports.getFlights = async () => {
   const data = await Flights.findAll({
@@ -6,11 +8,69 @@ exports.getFlights = async () => {
       {
         model: Airlines,
       },
-      { model: Airports, as: "StartAirport" },
-      { model: Airports, as: "EndAirport" },
+      {
+        model: Airports,
+        as: "StartAirport",
+      },
+      {
+        model: Airports,
+        as: "EndAirport",
+      },
     ],
   });
+
   return data;
+};
+
+exports.getFlightsbyFilter = async (key, value, filter, order, start, end) => {
+  let whereClause = {};
+
+  if (key && value) {
+    if (key === "departureAt") {
+      const startDate = moment(value).startOf("day").toDate();
+      const endDate = moment(value).endOf("day").toDate();
+      whereClause[key] = { [Op.between]: [startDate, endDate] };
+    } else {
+      whereClause[key] = value;
+    }
+  }
+
+  const data = await Flights.findAll({
+    order: [[filter, order]],
+    where: whereClause,
+    include: [
+      {
+        model: Airlines,
+      },
+      {
+        model: Airports,
+        as: "StartAirport",
+        where: {
+          city: start,
+        },
+      },
+      {
+        model: Airports,
+        as: "EndAirport",
+        where: {
+          city: end,
+        },
+      },
+    ],
+  });
+
+  if (data.length) {
+    data.forEach((flight) => {
+      flight.dataValues.departureAt = moment(
+        flight.dataValues.departureAt
+      ).format("YYYY-MM-DD HH:mm:ss");
+      flight.dataValues.arrivalAt = moment(flight.dataValues.arrivalAt).format(
+        "YYYY-MM-DD HH:mm:ss"
+      );
+    });
+    return data;
+  }
+  return "data tidak ditemukan";
 };
 
 exports.getFlightbyId = async (id) => {
@@ -36,6 +96,31 @@ exports.getFlightbyId = async (id) => {
 exports.createFlight = async (payload) => {
   const data = await Flights.create(payload);
   return data;
+};
+
+exports.decrementFlightCapacity = async (seatclass, value, id) => {
+  const flight = await Flights.findOne({
+    where: { id: id },
+    attributes: ["capacity" + seatclass],
+  });
+
+  if (!flight) {
+    throw new Error(`Flight dengan ID ${id} tidak ditemukan.`);
+  }
+
+  const currentCapacity = flight["capacity" + seatclass];
+  if (currentCapacity < value) {
+    throw new Error(
+      `Tidak bisa mengurangi kapasitas sebanyak ${value} karena hanya ada ${currentCapacity} kursi yang tersedia.`
+    );
+  }
+
+  await Flights.increment(
+    { ["capacity" + seatclass]: -value },
+    { where: { id: id } }
+  );
+
+  return `capacity telah berhasil di kurangi sebanyak ${value}`;
 };
 
 exports.updateFlight = async (id, payload) => {
