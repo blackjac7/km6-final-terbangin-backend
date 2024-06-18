@@ -210,13 +210,6 @@ exports.deleteNotification = async (req, res, next) => {
 
     const data = await NotificationUseCase.deleteNotification(id);
 
-    if (!data) {
-      throw {
-        statusCode: 404,
-        message: `Notification with notificationId is not found!`,
-      };
-    }
-
     res.status(200).json({
       message: "Success",
       data,
@@ -271,7 +264,7 @@ exports.updateNotificationsByUserId = async (req, res, next) => {
       statusRead,
     });
 
-    if (!data) {
+    if (!data || data.length === 0) {
       throw {
         statusCode: 404,
         message: `Notification with userId are not found!`,
