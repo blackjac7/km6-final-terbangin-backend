@@ -35,6 +35,8 @@ exports.getPaymentStatusFromTransactionStatus = (transactionStatus) => {
             return PaymentStatus.ISSUED;
         case ("cancel"):
             return PaymentStatus.CANCELLED;
+        case ("expired"):
+            return PaymentStatus.CANCELLED;
         default:
             return null;
     }
