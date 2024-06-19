@@ -1,4 +1,4 @@
-const { Flights , Seats, Airlines, Airports } = require("../../models");
+const { Flights, Seats, Airlines, Airports } = require("../../models");
 
 exports.getSeats = async () => {
   const data = await Seats.findAll({
@@ -36,7 +36,7 @@ exports.getSeatbyId = async (id) => {
   if (data.length) {
     return data;
   }
-  return "data tidak ditemukan";
+  return null;
 };
 
 exports.getSeatbyFlight = async (id) => {
@@ -59,9 +59,8 @@ exports.getSeatbyFlight = async (id) => {
   if (data.length) {
     return data;
   }
-  return "data tidak ditemukan";
+  return null;
 };
-
 
 exports.createSeat = async (payload) => {
   const data = await Seats.create(payload);

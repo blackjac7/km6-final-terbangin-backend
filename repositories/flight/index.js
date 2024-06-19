@@ -22,8 +22,36 @@ exports.getFlights = async () => {
   return data;
 };
 
-exports.getFlightsbyFilter = async (key, value, filter, order, start, end) => {
+exports.getFlightsbyFilter = async (
+  key,
+  value,
+  filter,
+  order,
+  start,
+  end,
+  seatType
+) => {
   let whereClause = {};
+  console.log(seatType);
+  if (seatType) {
+    let capacityField;
+    switch (seatType.toLowerCase()) {
+      case "economy":
+        capacityField = "capacityEconomy";
+        break;
+      case "bussines":
+        capacityField = "capacityBussines";
+        break;
+      case "firstclass":
+        capacityField = "capacityFirstClass";
+        break;
+      default:
+        throw new Error("Invalid seat type");
+    }
+    whereClause[capacityField] = {
+      [Op.not]: 0,
+    };
+  }
 
   if (key && value) {
     if (key === "departureAt") {
@@ -70,7 +98,7 @@ exports.getFlightsbyFilter = async (key, value, filter, order, start, end) => {
     });
     return data;
   }
-  return "data tidak ditemukan";
+  return null;
 };
 
 exports.getFlightbyId = async (id) => {
@@ -90,7 +118,7 @@ exports.getFlightbyId = async (id) => {
   if (data.length) {
     return data;
   }
-  return "data tidak ditemukan";
+  return null;
 };
 
 exports.createFlight = async (payload) => {
