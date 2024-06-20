@@ -31,6 +31,11 @@ module.exports = (sequelize, DataTypes) => {
                 onUpdate: "CASCADE",
                 as: "EndAirport",
             });
+            Flights.hasMany(models.Bookings, {
+              foreignKey: "roundtripFlightId",
+              onDelete: "CASCADE",
+              onUpdate: "CASCADE",
+            });
         }
     }
     Flights.init(
