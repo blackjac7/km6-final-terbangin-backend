@@ -29,40 +29,49 @@ module.exports = (sequelize, DataTypes) => {
                 onDelete: "CASCADE",
                 onUpdate: "CASCADE",
             });
+            Bookings.belongsTo(models.Flights, {
+              foreignKey: "roundtripFlightId",
+              onDelete: "CASCADE",
+              onUpdate: "CASCADE",
+            });
         }
     }
     Bookings.init(
-        {
-            id: {
-                allowNull: false,
-                primaryKey: true,
-                type: DataTypes.UUID,
-            },
-            bookingCode: {
-                allowNull: false,
-                type: DataTypes.STRING,
-            },
-            userId: {
-                allowNull: false,
-                type: DataTypes.UUID,
-            },
-            paymentId: {
-                allowNull: false,
-                type: DataTypes.UUID,
-            },
-            status: {
-                defaultValue: "One Way",
-                type: DataTypes.ENUM("One Way", "Return"),
-            },
-            deletedAt: {
-                type: DataTypes.DATE,
-            },
+      {
+        id: {
+          allowNull: false,
+          primaryKey: true,
+          type: DataTypes.UUID,
         },
-        {
-            sequelize,
-            modelName: "Bookings",
-            paranoid: true,
-        }
+        bookingCode: {
+          allowNull: false,
+          type: DataTypes.STRING,
+        },
+        userId: {
+          allowNull: false,
+          type: DataTypes.UUID,
+        },
+        paymentId: {
+          allowNull: false,
+          type: DataTypes.UUID,
+        },
+        roundtripFlightId: {
+          allowNull: true,
+          type: DataTypes.UUID,
+        },
+        status: {
+          defaultValue: "One Way",
+          type: DataTypes.ENUM("One Way", "Return"),
+        },
+        deletedAt: {
+          type: DataTypes.DATE,
+        },
+      },
+      {
+        sequelize,
+        modelName: "Bookings",
+        paranoid: true,
+      }
     );
     return Bookings;
 };
