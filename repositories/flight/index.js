@@ -1,164 +1,154 @@
 const { Flights, Airlines, Airports } = require("../../models");
+const { Op } = require("sequelize");
+const moment = require("moment");
 
 exports.getFlights = async () => {
-  const data = await Flights.findAll({
-    include: [
-      {
-        model: Airlines,
-      },
-      {
-        model: Airports,
-        as: "StartAirport",
-      },
-      {
-        model: Airports,
-        as: "EndAirport",
-      },
-    ],
-  });
+    const data = await Flights.findAll({
+        include: [
+            {
+                model: Airlines,
+            },
+            {
+                model: Airports,
+                as: "StartAirport",
+            },
+            {
+                model: Airports,
+                as: "EndAirport",
+            },
+        ],
+    });
 
-  return data;
+    return data;
 };
 
 exports.getFlightsbyFilter = async (key, value, filter, order, start, end) => {
-  if (key && value) {
+    let whereClause = {};
+
+    if (key && value) {
+        if (key === "departureAt") {
+            const startDate = moment(value).startOf("day").toDate();
+            const endDate = moment(value).endOf("day").toDate();
+            whereClause[key] = { [Op.between]: [startDate, endDate] };
+        } else {
+            whereClause[key] = value;
+        }
+    }
+
     const data = await Flights.findAll({
-      order: [[filter, order]],
-      where: {
-        [key]: value,
-      },
-      include: [
-        {
-          model: Airlines,
-        },
-        {
-          model: Airports,
-          as: "StartAirport",
-          where: {
-            city: start,
-          },
-        },
-        {
-          model: Airports,
-          as: "EndAirport",
-          where: {
-            city: end,
-          },
-        },
-      ],
+        order: [[filter, order]],
+        where: whereClause,
+        include: [
+            {
+                model: Airlines,
+            },
+            {
+                model: Airports,
+                as: "StartAirport",
+                where: {
+                    city: start,
+                },
+            },
+            {
+                model: Airports,
+                as: "EndAirport",
+                where: {
+                    city: end,
+                },
+            },
+        ],
     });
 
     if (data.length) {
-      return data;
+        data.forEach((flight) => {
+            flight.dataValues.departureAt = moment(
+                flight.dataValues.departureAt
+            ).format("YYYY-MM-DD HH:mm:ss");
+            flight.dataValues.arrivalAt = moment(
+                flight.dataValues.arrivalAt
+            ).format("YYYY-MM-DD HH:mm:ss");
+        });
+        return data;
     }
     return "data tidak ditemukan";
-  } else {
-    const data = await Flights.findAll({
-      order: [[filter, order]],
-      include: [
-        {
-          model: Airlines,
-        },
-        {
-          model: Airports,
-          as: "StartAirport",
-          where: {
-            city: start,
-          },
-        },
-        {
-          model: Airports,
-          as: "EndAirport",
-          where: {
-            city: end,
-          },
-        },
-      ],
-    });
-
-    if (data.length) {
-      return data;
-    }
-    return "data tidak ditemukan";
-  }
 };
 
 exports.getFlightbyId = async (id) => {
-  const data = await Flights.findAll({
-    where: {
-      id,
-    },
-    include: [
-      {
-        model: Airlines,
-      },
-      { model: Airports, as: "StartAirport" },
-      { model: Airports, as: "EndAirport" },
-    ],
-  });
+    const data = await Flights.findAll({
+        where: {
+            id,
+        },
+        include: [
+            {
+                model: Airlines,
+            },
+            { model: Airports, as: "StartAirport" },
+            { model: Airports, as: "EndAirport" },
+        ],
+    });
 
-  if (data.length) {
-    return data;
-  }
-  return "data tidak ditemukan";
+    if (data.length) {
+        return data;
+    }
+    return "data tidak ditemukan";
 };
 
 exports.createFlight = async (payload) => {
-  const data = await Flights.create(payload);
-  return data;
+    const data = await Flights.create(payload);
+    return data;
 };
 
 exports.decrementFlightCapacity = async (seatclass, value, id) => {
-  const flight = await Flights.findOne({
-    where: { id: id },
-    attributes: ["capacity" + seatclass],
-  });
+    const flight = await Flights.findOne({
+        where: { id: id },
+        attributes: ["capacity" + seatclass],
+    });
 
-  if (!flight) {
-    throw new Error(`Flight dengan ID ${id} tidak ditemukan.`);
-  }
+    if (!flight) {
+        throw new Error(`Flight dengan ID ${id} tidak ditemukan.`);
+    }
 
-  const currentCapacity = flight["capacity" + seatclass];
-  if (currentCapacity < value) {
-    throw new Error(
-      `Tidak bisa mengurangi kapasitas sebanyak ${value} karena hanya ada ${currentCapacity} kursi yang tersedia.`
+    const currentCapacity = flight["capacity" + seatclass];
+    if (currentCapacity < value) {
+        throw new Error(
+            `Tidak bisa mengurangi kapasitas sebanyak ${value} karena hanya ada ${currentCapacity} kursi yang tersedia.`
+        );
+    }
+
+    await Flights.increment(
+        { ["capacity" + seatclass]: -value },
+        { where: { id: id } }
     );
-  }
 
-  await Flights.increment(
-    { ["capacity" + seatclass]: -value },
-    { where: { id: id } }
-  );
-
-  return `capacity telah berhasil di kurangi sebanyak ${value}`;
+    return `capacity telah berhasil di kurangi sebanyak ${value}`;
 };
 
 exports.updateFlight = async (id, payload) => {
-  await Flights.update(payload, {
-    where: {
-      id,
-    },
-  });
+    await Flights.update(payload, {
+        where: {
+            id,
+        },
+    });
 
-  const data = await Flights.findAll({
-    where: {
-      id,
-    },
-    include: [
-      {
-        model: Airlines,
-      },
-      { model: Airports, as: "StartAirport" },
-      { model: Airports, as: "EndAirport" },
-    ],
-  });
+    const data = await Flights.findAll({
+        where: {
+            id,
+        },
+        include: [
+            {
+                model: Airlines,
+            },
+            { model: Airports, as: "StartAirport" },
+            { model: Airports, as: "EndAirport" },
+        ],
+    });
 
-  return data;
+    return data;
 };
 
 exports.deleteFlight = async (id) => {
-  // delete from postgres
-  await Flights.destroy({ where: { id } });
+    // delete from postgres
+    await Flights.destroy({ where: { id } });
 
-  return null;
+    return null;
 };
