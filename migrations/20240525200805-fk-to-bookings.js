@@ -24,6 +24,17 @@ module.exports = {
       onDelete: "CASCADE",
       onUpdate: "CASCADE",
     });
+    await queryInterface.addConstraint("Bookings", {
+      fields: ["roundtripFlightId"],
+      type: "foreign key",
+      name: "fk-to-bookings-roundtripFlightId",
+      references: {
+        table: "Flights",
+        field: "id",
+      },
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+    });
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.removeConstraint("Bookings", "fk-to-bookings-userId");

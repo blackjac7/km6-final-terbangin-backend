@@ -14,6 +14,11 @@ module.exports = (sequelize, DataTypes) => {
                 onDelete: "CASCADE",
                 onUpdate: "CASCADE",
             });
+            Payments.hasOne(models.Bookings, {
+              foreignKey: "paymentId",
+              onDelete: "CASCADE",
+              onUpdate: "CASCADE",
+            });
         }
     }
     Payments.init(
@@ -26,9 +31,6 @@ module.exports = (sequelize, DataTypes) => {
             userId: {
                 allowNull: false,
                 type: DataTypes.UUID,
-            },
-            expire: {
-                type: DataTypes.DATE,
             },
             status: {
                 defaultValue: "UNPAID",

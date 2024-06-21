@@ -1,16 +1,33 @@
-const { Bookings } = require("../../models");
+const { Bookings, Users, Payments } = require("../../models");
 const { v4: uuidv4 } = require("uuid");
 
 exports.getBookings = async () => {
-    const data = await Bookings.findAll({});
+    const data = await Bookings.findAll({
+      include: [
+        {
+          model: Users,
+        },
+        {
+          model: Payments,
+        },
+      ],
+    });
     return data;
 };
 
 exports.getBookingById = async (id) => {
     const data = await Bookings.findAll({
-        where: {
-            id,
+      where: {
+        id,
+      },
+      include: [
+        {
+          model: Users,
         },
+        {
+          model: Payments,
+        },
+      ],
     });
     if (data.length) {
         return data;

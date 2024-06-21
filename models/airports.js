@@ -52,12 +52,12 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 type: DataTypes.STRING,
             },
-            picture: {
-                type: DataTypes.TEXT,
-            },
             timezone: {
                 allowNull: false,
                 type: DataTypes.STRING,
+            },
+            picture: {
+                type: DataTypes.TEXT,
             },
             deletedAt: {
                 type: DataTypes.DATE,

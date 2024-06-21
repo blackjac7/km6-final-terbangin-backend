@@ -12,9 +12,6 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.UUID,
             },
-            expire: {
-                type: Sequelize.DATE,
-            },
             status: {
                 defaultValue: "UNPAID",
                 type: Sequelize.ENUM("ISSUED", "UNPAID", "CANCELLED"),

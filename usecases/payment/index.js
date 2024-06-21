@@ -21,15 +21,6 @@ exports.getPaymentById = async (id, user) => {
             message: "Not allowed to access other user's payment(s)!",
         });
     }
-    const isExpired = paymentUtils.isPaymentExpired(data);
-
-    if (isExpired) {
-        if (data.status !== PaymentStatus.CANCELLED) {
-            await paymentRepo.updatePaymentById(id, {
-                status: PaymentStatus.CANCELLED,
-            });
-        }
-    }
     return data;
 };
 
@@ -48,58 +39,60 @@ exports.getPaymentsByUserId = async (userId, user) => {
             message: `Payment with user ID ${userId} does not exist!`,
         });
     }
-    const isExpired = paymentUtils.isPaymentExpired(data);
-
-    if (isExpired) {
-        if (data.status !== PaymentStatus.CANCELLED) {
-            await paymentRepo.updatePaymentById(id, {
-                status: PaymentStatus.CANCELLED,
-            });
-        }
-    }
     return data;
 };
 
 exports.addPayment = async (payload) => {
-    const { method, totalPrice, user } = payload;
+    const { totalPrice, user } = payload;
 
-    if (!method) {
-        throw new HttpError({
-            statusCode: 400,
-            message: "Field method must be filled!",
-        });
-    }
     if (!totalPrice) {
         throw new HttpError({
             statusCode: 400,
             message: "Field totalPrice must be filled!",
         });
     }
-    payload = {
+    let modifiedPayload = {
         ...payload,
         id: uuidv4(),
         userId: user.id,
-        expire: paymentUtils.calculateExpiryDate(),
     };
-    const midtransPayment = await midtrans.generateMidtransPayment(payload);
-    const { snapToken, redirect_url: snapLink } = midtransPayment;
-    payload = { ...payload, snapLink, snapToken };
+    const midtransPayment = await midtrans.generateMidtransPayment(
+        modifiedPayload
+    );
+    const { token: snapToken, redirect_url: snapLink } = midtransPayment;
+    modifiedPayload = { ...modifiedPayload, snapLink, snapToken };
 
-    return paymentRepo.addPayment(payload);
+    return paymentRepo.addPayment(modifiedPayload);
 };
 
 exports.updatePaymentById = async (id, payload) => {
-    const { user } = payload;
+    const {
+        user,
+        transaction_status: transactionStatus,
+        payment_type: method,
+    } = payload;
     const toBeUpdated = await this.getPaymentById(id, user);
 
     // payment yg statusnya issued atau cancelled udah ga bisa di-update lagi
     if (toBeUpdated.status !== PaymentStatus.UNPAID) {
         return toBeUpdated;
     }
-    return paymentRepo.updatePaymentById(id, {
-        ...payload,
-        updatedAt: new Date(),
-    });
+    let modifiedPayload = { ...payload };
+    delete modifiedPayload.user; // delete the no longer used user data for payload
+
+    if (transactionStatus) {
+        const paymentStatus =
+            paymentUtils.getPaymentStatusFromTransactionStatus(
+                transactionStatus
+            );
+        modifiedPayload = { ...modifiedPayload, status: paymentStatus };
+    }
+    if (method) {
+        modifiedPayload = { ...modifiedPayload, method };
+    }
+    modifiedPayload = { ...modifiedPayload, updatedAt: new Date() };
+
+    return paymentRepo.updatePaymentById(id, modifiedPayload);
 };
 
 exports.deletePaymentById = async (id, user) => {
