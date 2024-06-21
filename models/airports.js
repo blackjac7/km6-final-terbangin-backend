@@ -55,6 +55,10 @@ module.exports = (sequelize, DataTypes) => {
             picture: {
                 type: DataTypes.TEXT,
             },
+            timezone: {
+                allowNull: false,
+                type: DataTypes.STRING,
+            },
             deletedAt: {
                 type: DataTypes.DATE,
             },
