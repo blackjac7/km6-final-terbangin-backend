@@ -11,6 +11,7 @@ const verificationRoutes = require("./verification");
 const notificationRoutes = require("./notification");
 const paymentRoutes = require("./payment");
 const bookingRoutes = require("./booking");
+const algoliaRoutes = require("./algolia");
 const { authMiddleware } = require("../middlewares/auth");
 
 router.use("/auth", authRoutes);
@@ -36,5 +37,7 @@ router.use("/verification", verificationRoutes);
 router.use("/notification", notificationRoutes);
 
 router.use("/payment", authMiddleware, paymentRoutes);
+
+router.use("/algolia", algoliaRoutes);
 
 module.exports = router;

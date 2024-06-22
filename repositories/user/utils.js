@@ -14,4 +14,4 @@ exports.processProfilePicture = async (picture) => {
 
     const imageUpload = await uploader(picture);
     return imageUpload.secure_url;
-}
+};
