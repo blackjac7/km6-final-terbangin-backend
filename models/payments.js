@@ -14,6 +14,11 @@ module.exports = (sequelize, DataTypes) => {
                 onDelete: "CASCADE",
                 onUpdate: "CASCADE",
             });
+            Payments.hasOne(models.Bookings, {
+              foreignKey: "paymentId",
+              onDelete: "CASCADE",
+              onUpdate: "CASCADE",
+            });
         }
     }
     Payments.init(
