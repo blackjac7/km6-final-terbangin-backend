@@ -12,6 +12,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "algoliasearch": "^4.23.3",
         "axios": "^1.7.2",
         "bcrypt": "^5.1.1",
         "cloudinary": "^2.2.0",
