@@ -5,14 +5,23 @@ exports.getFlights = async () => {
   return data;
 };
 
-exports.getFlightsbyFilter = async (key, value, filter, order, start, end) => {
+exports.getFlightsbyFilter = async (
+  key,
+  value,
+  filter,
+  order,
+  start,
+  end,
+  seatType
+) => {
   const data = await flightsRepo.getFlightsbyFilter(
     key,
     value,
     filter,
     order,
     start,
-    end
+    end,
+    seatType
   );
   return data;
 };

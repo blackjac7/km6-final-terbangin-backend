@@ -52,6 +52,10 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 type: DataTypes.STRING,
             },
+            timezone: {
+                allowNull: false,
+                type: DataTypes.STRING,
+            },
             picture: {
                 type: DataTypes.TEXT,
             },
