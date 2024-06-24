@@ -17,7 +17,7 @@ exports.getNotification = async (req, res, next) => {
     if (!data) {
       throw {
         statusCode: 404,
-        message: `Notification with id is not found!`,
+        message: `Notification with Id ${id} is not found!`,
       };
     }
 
@@ -280,4 +280,32 @@ exports.updateNotificationsByUserId = async (req, res, next) => {
   }
 };
 
+exports.readNotification = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    if (!id || !isUUID(id)) {
+      throw {
+        statusCode: 400,
+        message: "NotificationId must be a valid UUID",
+      };
+    }
+
+    const data = await NotificationUseCase.readNotification(id);
+
+    if (!data) {
+      throw {
+        statusCode: 404,
+        message: `Notification with id ${id} not found!`,
+      };
+    }
+
+    res.status(200).json({
+      message: "Success",
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 

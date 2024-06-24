@@ -115,3 +115,16 @@ exports.googleLogin = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.notification = async (req, res, next) => {
+  try {
+    const data = req?.user;
+
+    res.status(200).json({
+      message: "Success",
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -74,10 +74,10 @@ exports.getFlightsbyFilter = async (req, res, next) => {
     }
 
     if (!seatType) {
-      seatType = "Economy";
+      seatType = "economy";
     }
-    const validTypes = ["Economy", "Bussines", "Firstclass"];
-    if (!validTypes.includes(seatType)) {
+    const validTypes = ["economy", "bussines", "firstclass"];
+    if (!validTypes.includes(seatType.toLowerCase())) {
       throw {
         statusCode: 400,
         message: "type must be one of Economy, Bussines, Firstclass",
@@ -91,7 +91,7 @@ exports.getFlightsbyFilter = async (req, res, next) => {
       order,
       start,
       end,
-      seatType
+      seatType.toLowerCase()
     );
 
     if (!data) {
