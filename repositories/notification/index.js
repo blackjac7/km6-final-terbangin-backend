@@ -1,16 +1,7 @@
-const { Notifications, Users, Bookings } = require("../../models");
+const { Notifications } = require("../../models");
 
 exports.getNotification = async (id) => {
-  const data = await Notifications.findByPk(id, {
-    include: [
-      {
-        model: Users,
-      },
-      {
-        model: Bookings,
-      },
-    ],
-  });
+  const data = await Notifications.findByPk(id);
 
   if (data) {
     return data;
@@ -19,33 +10,15 @@ exports.getNotification = async (id) => {
 };
 
 exports.getNotificationsByUserId = async (userId) => {
-  
   const data = await Notifications.findAll({
     where: { userId },
-    include: [
-      {
-        model: Users,
-      },
-      {
-        model: Bookings,
-      },
-    ],
   });
   return data;
 };
 
 exports.getNotificationsByBookingId = async (bookingId) => {
-
   const data = await Notifications.findAll({
     where: { bookingId },
-    include: [
-      {
-        model: Users,
-      },
-      {
-        model: Bookings,
-      },
-    ],
   });
   return data;
 };
@@ -64,7 +37,6 @@ exports.updateNotification = async (id, payload) => {
   return data;
 };
 
-
 exports.deleteNotification = async (id) => {
   await Notifications.destroy({ where: { id }, force: true });
   return null;
@@ -75,9 +47,7 @@ exports.getNotifications = async () => {
   return data;
 };
 
-
 exports.updateNotificationsByUserId = async (userId, payload) => {
-
   await Notifications.update(payload, {
     where: { userId },
   });
@@ -85,5 +55,17 @@ exports.updateNotificationsByUserId = async (userId, payload) => {
   const data = await Notifications.findAll({
     where: { userId },
   });
+  return data;
+};
+
+exports.readNotification = async (id) => {
+  await Notifications.update(
+    { statusRead: true },
+    {
+      where: { id },
+    }
+  );
+
+  const data = await Notifications.findByPk(id);
   return data;
 };
