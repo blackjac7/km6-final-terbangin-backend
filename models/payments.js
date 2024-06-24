@@ -22,42 +22,42 @@ module.exports = (sequelize, DataTypes) => {
         }
     }
     Payments.init(
-        {
-            id: {
-                allowNull: false,
-                primaryKey: true,
-                type: DataTypes.UUID,
-            },
-            userId: {
-                allowNull: false,
-                type: DataTypes.UUID,
-            },
-            status: {
-                defaultValue: "UNPAID",
-                type: DataTypes.ENUM("ISSUED", "UNPAID", "CANCELLED"),
-            },
-            method: {
-                type: DataTypes.STRING,
-            },
-            snapLink: {
-                type: DataTypes.TEXT,
-            },
-            snapToken: {
-                type: DataTypes.TEXT,
-            },
-            totalPrice: {
-                allowNull: false,
-                type: DataTypes.INTEGER,
-            },
-            deletedAt: {
-                type: DataTypes.DATE,
-            },
+      {
+        id: {
+          allowNull: false,
+          primaryKey: true,
+          type: DataTypes.UUID,
         },
-        {
-            sequelize,
-            modelName: "Payments",
-            paranoid: true,
-        }
+        userId: {
+          allowNull: false,
+          type: DataTypes.UUID,
+        },
+        status: {
+          defaultValue: "UNPAID",
+          type: DataTypes.ENUM("ISSUED", "UNPAID", "CANCELLED"),
+        },
+        method: {
+          type: DataTypes.STRING,
+        },
+        snapLink: {
+          type: DataTypes.TEXT,
+        },
+        snapToken: {
+          type: DataTypes.TEXT,
+        },
+        totalPrice: {
+          type: DataTypes.DECIMAL(10, 2),
+          allowNull: false,
+        },
+        deletedAt: {
+          type: DataTypes.DATE,
+        },
+      },
+      {
+        sequelize,
+        modelName: "Payments",
+        paranoid: true,
+      }
     );
     return Payments;
 };
