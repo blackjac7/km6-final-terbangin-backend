@@ -1,4 +1,5 @@
 const paymentUsecase = require("../../usecases/payment/index");
+const midtransUsecase = require("../../usecases/payment/midtrans");
 
 exports.getPaymentById = async (req, res, next) => {
     try {
@@ -75,3 +76,11 @@ exports.deletePaymentById = async (req, res, next) => {
         next(e);
     }
 };
+
+exports.handleMidtransNotification = async (_, __, next) => {
+    try {
+        await midtransUsecase.handleMidtransNotification();
+    } catch (e) {
+        next(e);
+    }
+}

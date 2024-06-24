@@ -1,7 +1,9 @@
 const axios = require("axios");
 const userRepo = require("../../repositories/user/index");
 const HttpError = require("../../utils/HttpError");
-const { PaymentStatus } = require("../../utils/constants");
+const { PaymentStatus, clientUrl, Midtrans } = require("../../utils/constants");
+const midtransApiClient = require("../../config/midtrans");
+const { updatePaymentById } = require("../../repositories/payment/index");
 
 /**
  * - nge-return object dengan key token dan redirect_url
@@ -23,18 +25,25 @@ exports.generateMidtransTransaction = async (payment) => {
             email: belongingUser.email,
             phone: belongingUser.phoneNumber,
         },
+        callbacks: {
+            finish: `${clientUrl}/payment-success`,
+            error: `${clientUrl}/payment`,
+        },
+        expiry: {
+            unit: "hour",
+            duration: 10,
+        },
     };
     // encode server key with base-64
-    const authString = btoa(`${process.env.MIDTRANS_SERVER_KEY}:`);
+    const authString = btoa(`${Midtrans.SERVER_KEY}:`);
 
     try {
         const response = await axios.post(
-            process.env.MIDTRANS_SANDBOX_API,
+            Midtrans.SANDBOX_API,
             JSON.stringify(payload),
             {
                 headers: {
                     "Content-Type": "application/json",
-                    Accept: "application/json",
                     Authorization: `Basic ${authString}`,
                 },
             }
@@ -63,4 +72,48 @@ exports.getPaymentStatusFromTransactionStatus = (transactionStatus) => {
         default:
             return null;
     }
+};
+
+exports.handleMidtransNotification = async () => {
+    midtransApiClient.transaction
+        .notification(notificationJson)
+        .then((statusResponse) => {
+            let transactionId = statusResponse.transaction_id;
+            let transactionStatus = statusResponse.transaction_status;
+            let fraudStatus = statusResponse.fraud_status;
+
+            // Sample transactionStatus handling logic
+
+            if (transactionStatus === "capture") {
+                if (fraudStatus === "accept") {
+                    // TODO set transaction status on your database to 'success'
+                    // and response with 200 OK
+                    return updatePaymentById(transactionId, {
+                        status: PaymentStatus.ISSUED,
+                    });
+                }
+            } else if (transactionStatus === "settlement") {
+                // TODO set transaction status on your database to 'success'
+                // and response with 200 OK
+                return updatePaymentById(transactionId, {
+                    status: PaymentStatus.ISSUED,
+                });
+            } else if (
+                transactionStatus === "cancel" ||
+                transactionStatus === "deny" ||
+                transactionStatus === "expire"
+            ) {
+                // TODO set transaction status on your database to 'failure'
+                // and response with 200 OK
+                return updatePaymentById(transactionId, {
+                    status: PaymentStatus.CANCELLED,
+                });
+            } else if (transactionStatus == "pending") {
+                // TODO set transaction status on your database to 'pending' / waiting payment
+                // and response with 200 OK
+                return updatePaymentById(transactionId, {
+                    status: PaymentStatus.UNPAID,
+                });
+            }
+        });
 };
