@@ -1,5 +1,4 @@
 const paymentRepo = require("../../repositories/payment/index");
-const paymentUtils = require("./utils");
 const midtrans = require("./midtrans");
 const HttpError = require("../../utils/HttpError");
 const { PaymentStatus } = require("../../utils/constants");
@@ -56,11 +55,11 @@ exports.addPayment = async (payload) => {
         id: uuidv4(),
         userId: user.id,
     };
-    const midtransPayment = await midtrans.generateMidtransPayment(
+    const midtransPayment = await midtrans.generateMidtransTransaction(
         modifiedPayload
     );
     const { token: snapToken, redirect_url: snapLink } = midtransPayment;
-    modifiedPayload = { ...modifiedPayload, snapLink, snapToken };
+    modifiedPayload = { ...modifiedPayload, snapToken, snapLink };
 
     return paymentRepo.addPayment(modifiedPayload);
 };
@@ -82,9 +81,7 @@ exports.updatePaymentById = async (id, payload) => {
 
     if (transactionStatus) {
         const paymentStatus =
-            paymentUtils.getPaymentStatusFromTransactionStatus(
-                transactionStatus
-            );
+            midtrans.getPaymentStatusFromTransactionStatus(transactionStatus);
         modifiedPayload = { ...modifiedPayload, status: paymentStatus };
     }
     if (method) {
