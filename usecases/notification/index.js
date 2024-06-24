@@ -46,4 +46,9 @@ exports.updateNotificationsByUserId = async (userId, payload) => {
   return data;
 };
 
+exports.readNotification = async (id) => {
+  const data = await NotificationRepository.readNotification(id);
+  return data;
+};
+
 
