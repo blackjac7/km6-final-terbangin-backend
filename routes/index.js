@@ -36,7 +36,7 @@ router.use("/verification", verificationRoutes);
 
 router.use("/notification", notificationRoutes);
 
-router.use("/payment", authMiddleware, paymentRoutes);
+router.use("/payment", paymentRoutes);
 
 router.use("/algolia", algoliaRoutes);
 

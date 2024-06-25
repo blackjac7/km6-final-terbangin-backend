@@ -1,8 +1,7 @@
 const axios = require("axios");
 const userRepo = require("../../repositories/user/index");
 const HttpError = require("../../utils/HttpError");
-const { PaymentStatus, clientUrl, Midtrans } = require("../../utils/constants");
-const midtransApiClient = require("../../config/midtrans");
+const { PaymentStatus, Midtrans, clientUrl } = require("../../utils/constants");
 const { updatePaymentById } = require("../../repositories/payment/index");
 
 /**
@@ -24,14 +23,6 @@ exports.generateMidtransTransaction = async (payment) => {
             first_name: belongingUser.fullName,
             email: belongingUser.email,
             phone: belongingUser.phoneNumber,
-        },
-        callbacks: {
-            finish: `${clientUrl}/payment-success`,
-            error: `${clientUrl}/payment`,
-        },
-        expiry: {
-            unit: "hour",
-            duration: 10,
         },
     };
     // encode server key with base-64
@@ -74,46 +65,48 @@ exports.getPaymentStatusFromTransactionStatus = (transactionStatus) => {
     }
 };
 
-exports.handleMidtransNotification = async () => {
-    midtransApiClient.transaction
-        .notification(notificationJson)
-        .then((statusResponse) => {
-            let transactionId = statusResponse.transaction_id;
-            let transactionStatus = statusResponse.transaction_status;
-            let fraudStatus = statusResponse.fraud_status;
+// method yg dijalanin sama midtrans setelah pembayaran
+exports.handleMidtransNotification = async (notification) => {
+    const orderId = notification.order_id;
+    const transactionStatus = notification.transaction_status;
+    const fraudStatus = notification.fraud_status;
 
-            // Sample transactionStatus handling logic
+    console.log(
+        `Transaction notification received. Order ID: ${orderId}. Transaction status: ${transactionStatus}. Fraud status: ${fraudStatus}`
+    );
 
-            if (transactionStatus === "capture") {
-                if (fraudStatus === "accept") {
-                    // TODO set transaction status on your database to 'success'
-                    // and response with 200 OK
-                    return updatePaymentById(transactionId, {
-                        status: PaymentStatus.ISSUED,
-                    });
-                }
-            } else if (transactionStatus === "settlement") {
-                // TODO set transaction status on your database to 'success'
-                // and response with 200 OK
-                return updatePaymentById(transactionId, {
-                    status: PaymentStatus.ISSUED,
-                });
-            } else if (
-                transactionStatus === "cancel" ||
-                transactionStatus === "deny" ||
-                transactionStatus === "expire"
-            ) {
-                // TODO set transaction status on your database to 'failure'
-                // and response with 200 OK
-                return updatePaymentById(transactionId, {
-                    status: PaymentStatus.CANCELLED,
-                });
-            } else if (transactionStatus == "pending") {
-                // TODO set transaction status on your database to 'pending' / waiting payment
-                // and response with 200 OK
-                return updatePaymentById(transactionId, {
-                    status: PaymentStatus.UNPAID,
-                });
-            }
+    // Sample transactionStatus handling logic
+
+    if (transactionStatus === "capture") {
+        if (fraudStatus === "accept") {
+            // TODO set transaction status on your database to 'success'
+            // and response with 200 OK
+            return updatePaymentById(orderId, {
+                status: PaymentStatus.ISSUED,
+            });
+        }
+    } else if (transactionStatus === "settlement") {
+        // TODO set transaction status on your database to 'success'
+        // and response with 200 OK
+        return updatePaymentById(orderId, {
+            status: PaymentStatus.ISSUED,
         });
+    } else if (
+        transactionStatus === "cancel" ||
+        transactionStatus === "deny" ||
+        transactionStatus === "expire"
+    ) {
+        // TODO set transaction status on your database to 'failure'
+        // and response with 200 OK
+        return updatePaymentById(orderId, {
+            status: PaymentStatus.CANCELLED,
+        });
+    } else if (transactionStatus === "pending") {
+        // TODO set transaction status on your database to 'pending' / waiting payment
+        // and response with 200 OK
+        return updatePaymentById(orderId, {
+            status: PaymentStatus.UNPAID,
+        });
+    }
+    return null;
 };
