@@ -1,5 +1,8 @@
 const axios = require("axios");
+const { v4: uuidv4 } = require("uuid");
 const userRepo = require("../../repositories/user/index");
+const paymentRepo = require("../../repositories/payment/index");
+const bookingRepo = require("../../repositories/booking/index");
 const HttpError = require("../../utils/HttpError");
 const { PaymentStatus, Midtrans, clientUrl } = require("../../utils/constants");
 const { updatePaymentById } = require("../../repositories/payment/index");
@@ -30,7 +33,7 @@ exports.generateMidtransTransaction = async (payment) => {
 
     try {
         const response = await axios.post(
-            Midtrans.SANDBOX_API,
+            Midtrans.TRANSACTION_SANDBOX_API,
             JSON.stringify(payload),
             {
                 headers: {
@@ -81,16 +84,28 @@ exports.handleMidtransNotification = async (notification) => {
         if (fraudStatus === "accept") {
             // TODO set transaction status on your database to 'success'
             // and response with 200 OK
-            return updatePaymentById(orderId, {
-                status: PaymentStatus.ISSUED,
-            });
+            const transaction = await paymentRepo.getPaymentById(orderId);
+
+            if (transaction.status !== PaymentStatus.ISSUED) {
+                // buat invoice nya trus update data payment
+                await createPaymentInvoice(transaction);
+                return updatePaymentById(orderId, {
+                    status: PaymentStatus.ISSUED,
+                });
+            }
         }
     } else if (transactionStatus === "settlement") {
         // TODO set transaction status on your database to 'success'
         // and response with 200 OK
-        return updatePaymentById(orderId, {
-            status: PaymentStatus.ISSUED,
-        });
+        const transaction = await paymentRepo.getPaymentById(orderId);
+
+        if (transaction.status !== PaymentStatus.ISSUED) {
+            // buat invoice nya trus update data payment
+            await createPaymentInvoice(transaction);
+            return updatePaymentById(orderId, {
+                status: PaymentStatus.ISSUED,
+            });
+        }
     } else if (
         transactionStatus === "cancel" ||
         transactionStatus === "deny" ||
@@ -109,4 +124,56 @@ exports.handleMidtransNotification = async (notification) => {
         });
     }
     return null;
+};
+
+const createPaymentInvoice = async (payment) => {
+    const belongingUser = await userRepo.getUserById(payment.userId);
+    const belongingBookings = await bookingRepo.getBookingsByPaymentId(
+        payment.id
+    );
+    const currentDate = new Date();
+    const payload = {
+        order_id: payment.id,
+        invoice_number: uuidv4(),
+        due_date: currentDate.toISOString(),
+        invoice_date: currentDate.toISOString(),
+        customer_details: {
+            id: belongingUser.id,
+            name: belongingUser.fullName,
+            email: belongingUser.email,
+            phone: belongingUser.phoneNumber,
+        },
+        item_details: [
+            {
+                item_id: belongingBookings[0].id,
+                price: payment.totalPrice,
+                description: "some description",
+                quantity: belongingBookings.length,
+            },
+        ],
+        notes: "invoice pembelian tiket",
+        payment_type: "payment_link",
+    };
+    // encode server key with base-64
+    const authString = btoa(`${Midtrans.SERVER_KEY}:`);
+
+    try {
+        const response = await axios.post(
+            Midtrans.INVOICE_SANDBOX_API,
+            JSON.stringify(payload),
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Basic ${authString}`,
+                },
+            }
+        );
+        const data = response.data;
+        // TO DO: add data invoice ke DB
+    } catch (e) {
+        throw new HttpError({
+            statusCode: e.httpStatusCode,
+            message: e.message,
+        });
+    }
 };

@@ -3,37 +3,45 @@ const { v4: uuidv4 } = require("uuid");
 
 exports.getBookings = async () => {
     const data = await Bookings.findAll({
-      include: [
-        {
-          model: Users,
-        },
-        {
-          model: Payments,
-        },
-      ],
+        include: [
+            {
+                model: Users,
+            },
+            {
+                model: Payments,
+            },
+        ],
     });
     return data;
 };
 
 exports.getBookingById = async (id) => {
     const data = await Bookings.findAll({
-      where: {
-        id,
-      },
-      include: [
-        {
-          model: Users,
+        where: {
+            id,
         },
-        {
-          model: Payments,
-        },
-      ],
+        include: [
+            {
+                model: Users,
+            },
+            {
+                model: Payments,
+            },
+        ],
     });
     if (data.length) {
         return data;
     }
 
     return "data not found";
+};
+
+exports.getBookingsByPaymentId = async (paymentId) => {
+    return Bookings.findAll({
+        where: {
+            paymentId,
+        },
+    });
 };
 
 exports.createBooking = async (payload) => {
