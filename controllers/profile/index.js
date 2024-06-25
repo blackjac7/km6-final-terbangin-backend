@@ -44,14 +44,14 @@ exports.getProfileByPhoneNumber = async (req, res, next) => {
 
 exports.updateProfileById = async (req, res, next) => {
     try {
-        const { id: userId } = req?.params;
+        const { id } = req?.params;
         let payload = req?.body;
 
         if (req?.files) {
             const { picture } = req?.files;
             payload = { ...payload, picture };
         }
-        const data = await profileUsecase.updateProfileById(userId, payload);
+        const data = await profileUsecase.updateProfileById(id, payload);
 
         return res.status(200).json({
             data,
