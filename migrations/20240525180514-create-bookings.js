@@ -24,8 +24,8 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.UUID,
             },
-            roundtripFlightId:{
-                allowNull:true,
+            roundtripFlightId: {
+                allowNull: true,
                 type: Sequelize.UUID,
             },
             deletedAt: {
