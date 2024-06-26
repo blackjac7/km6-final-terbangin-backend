@@ -3,8 +3,9 @@ const { v4: uuidv4 } = require("uuid");
 const userRepo = require("../../repositories/user/index");
 const paymentRepo = require("../../repositories/payment/index");
 const bookingRepo = require("../../repositories/booking/index");
+const notifRepo = require("../../repositories/notification/index");
 const HttpError = require("../../utils/HttpError");
-const { PaymentStatus, Midtrans, clientUrl } = require("../../utils/constants");
+const { PaymentStatus, Midtrans } = require("../../utils/constants");
 const { updatePaymentById } = require("../../repositories/payment/index");
 
 /**
@@ -88,7 +89,8 @@ exports.handleMidtransNotification = async (notification) => {
 
             if (transaction.status !== PaymentStatus.ISSUED) {
                 // buat invoice nya trus update data payment
-                await createPaymentInvoice(transaction);
+                // await createPaymentInvoice(transaction);
+                await notifRepo.updateNotificationByUserIdAndBookingId(transaction.userId, )
                 return updatePaymentById(orderId, {
                     status: PaymentStatus.ISSUED,
                 });
@@ -101,7 +103,7 @@ exports.handleMidtransNotification = async (notification) => {
 
         if (transaction.status !== PaymentStatus.ISSUED) {
             // buat invoice nya trus update data payment
-            await createPaymentInvoice(transaction);
+            // await createPaymentInvoice(transaction);
             return updatePaymentById(orderId, {
                 status: PaymentStatus.ISSUED,
             });
@@ -113,9 +115,11 @@ exports.handleMidtransNotification = async (notification) => {
     ) {
         // TODO set transaction status on your database to 'failure'
         // and response with 200 OK
-        return updatePaymentById(orderId, {
-            status: PaymentStatus.CANCELLED,
-        });
+        if (transaction.status !== PaymentStatus.CANCELLED) {
+            return updatePaymentById(orderId, {
+                status: PaymentStatus.CANCELLED,
+            });
+        }
     } else if (transactionStatus === "pending") {
         // TODO set transaction status on your database to 'pending' / waiting payment
         // and response with 200 OK
