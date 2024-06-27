@@ -308,4 +308,47 @@ exports.readNotification = async (req, res, next) => {
     next(error);
   }
 };
+exports.createAutomaticNotification = async (title, message, userId, bookingId) => {
+  try {
+    const id = uuidv4();
 
+    if (!userId || !isUUID(userId)) {
+      throw {
+        statusCode: 400,
+        message: "UserID must be provided and must be a valid UUID",
+      };
+    }
+    if (!bookingId || !isUUID(bookingId)) {
+      throw {
+        statusCode: 400,
+        message: "BookingID must be provided and must be a valid UUID",
+      };
+    }
+    if (!title || title.trim() === "") {
+      throw {
+        statusCode: 400,
+        message: "Title must be provided!",
+      };
+    }
+    if (!message || message.trim() === "") {
+      throw {
+        statusCode: 400,
+        message: "Message must be provided!",
+      };
+    }
+
+    const data = await NotificationUseCase.createNotification({
+      id,
+      userId,
+      bookingId,
+      title,
+      message,
+      statusRead: false,
+    });
+
+    return data;
+
+  } catch (error) {
+    throw error;
+  }
+};

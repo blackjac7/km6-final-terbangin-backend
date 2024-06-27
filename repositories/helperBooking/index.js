@@ -30,9 +30,19 @@ exports.createHelperBooking = async (payload) => {
 };
 
 exports.getHelperBookingById = async (id) => {
-  const opt = {
-    include: [Passangers, Seats, Bookings],
-  };
+    const opt = {
+        include: [
+            Passangers,
+            {
+                model: Seats,
+                include: [Flights],
+            },
+            {
+                model: Bookings,
+                include: [Payments],
+            },
+        ],
+    };
 
   const data = await HelperBookings.findByPk(id, opt);
 
@@ -48,11 +58,20 @@ exports.getHelperBookingById = async (id) => {
 
 exports.getHelperBookingByPassangerId = async (passangerId) => {
   const opt = {
-    where: {
-      passangerId,
-    },
-    include: [Passangers, Seats, Bookings],
-  };
+        where: {
+            passangerId,
+        },
+        include: [
+            Passangers,
+            {
+                model: Seats,
+                include: [Flights],
+            },
+            {
+                model: Bookings,
+                include: [Payments],
+            },
+        ]}
 
   const data = await HelperBookings.findAll(opt);
 
