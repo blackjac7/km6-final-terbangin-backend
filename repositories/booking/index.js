@@ -3,31 +3,31 @@ const { v4: uuidv4 } = require("uuid");
 
 exports.getBookings = async () => {
     const data = await Bookings.findAll({
-      include: [
-        {
-          model: Users,
-        },
-        {
-          model: Payments,
-        },
-      ],
+        include: [
+            {
+                model: Users,
+            },
+            {
+                model: Payments,
+            },
+        ],
     });
     return data;
 };
 
 exports.getBookingById = async (id) => {
     const data = await Bookings.findAll({
-      where: {
-        id,
-      },
-      include: [
-        {
-          model: Users,
+        where: {
+            id,
         },
-        {
-          model: Payments,
-        },
-      ],
+        include: [
+            {
+                model: Users,
+            },
+            {
+                model: Payments,
+            },
+        ],
     });
     if (data.length) {
         return data;
@@ -38,7 +38,7 @@ exports.getBookingById = async (id) => {
 
 exports.createBooking = async (payload) => {
     const id = uuidv4();
-    const bookingCode = `${id.slice(id.length - 6).toUpperCase()}`;
+    const bookingCode = `${id.slice(id.length - 9).toUpperCase()}`;
     payload = {
         id,
         bookingCode,
