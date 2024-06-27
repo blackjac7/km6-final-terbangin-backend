@@ -44,6 +44,15 @@ exports.getBookingsByPaymentId = async (paymentId) => {
     });
 };
 
+exports.getBookingByUserIdAndPaymentId = async (userId, paymentId) => {
+    return Bookings.findAll({
+        where: {
+            userId,
+            paymentId,
+        },
+    });
+};
+
 exports.createBooking = async (payload) => {
     const id = uuidv4();
     const bookingCode = `${id.slice(id.length - 9).toUpperCase()}`;

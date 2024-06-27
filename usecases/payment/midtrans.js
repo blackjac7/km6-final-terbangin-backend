@@ -1,9 +1,12 @@
 const axios = require("axios");
 const { v4: uuidv4 } = require("uuid");
-const userRepo = require("../../repositories/user/index");
-const paymentRepo = require("../../repositories/payment/index");
-const bookingRepo = require("../../repositories/booking/index");
-const notifRepo = require("../../repositories/notification/index");
+const { getUserById } = require("../../repositories/user/index");
+const { getPaymentById } = require("../../repositories/payment/index");
+const {
+    getBookingsByPaymentId,
+    getBookingByUserIdAndPaymentId,
+} = require("../../repositories/booking/index");
+const { createNotification } = require("../../repositories/notification/index");
 const HttpError = require("../../utils/HttpError");
 const { PaymentStatus, Midtrans } = require("../../utils/constants");
 const { updatePaymentById } = require("../../repositories/payment/index");
@@ -14,7 +17,7 @@ const { updatePaymentById } = require("../../repositories/payment/index");
  * - redirect_url dipake untuk ngarahin ke suatu page snap payment (untuk android)
  */
 exports.generateMidtransTransaction = async (payment) => {
-    const belongingUser = await userRepo.getUserById(payment.userId);
+    const belongingUser = await getUserById(payment.userId);
     const payload = {
         transaction_details: {
             order_id: payment.id,
@@ -71,7 +74,7 @@ exports.getPaymentStatusFromTransactionStatus = (transactionStatus) => {
 
 // method yg dijalanin sama midtrans setelah pembayaran
 exports.handleMidtransNotification = async (notification) => {
-    const orderId = notification.order_id;
+    const orderId = notification.order_id; // sama aja kayak payment ID
     const transactionStatus = notification.transaction_status;
     const fraudStatus = notification.fraud_status;
 
@@ -79,18 +82,18 @@ exports.handleMidtransNotification = async (notification) => {
         `Transaction notification received. Order ID: ${orderId}. Transaction status: ${transactionStatus}. Fraud status: ${fraudStatus}`
     );
 
-    // Sample transactionStatus handling logic
-
     if (transactionStatus === "capture") {
         if (fraudStatus === "accept") {
             // TODO set transaction status on your database to 'success'
             // and response with 200 OK
-            const transaction = await paymentRepo.getPaymentById(orderId);
+            const transaction = await getPaymentById(orderId);
 
             if (transaction.status !== PaymentStatus.ISSUED) {
-                // buat invoice nya trus update data payment
-                // await createPaymentInvoice(transaction);
-                await notifRepo.updateNotificationByUserIdAndBookingId(transaction.userId, )
+                await createNotificationByPaymentStatus(
+                    orderId,
+                    transaction.userId,
+                    PaymentStatus.ISSUED
+                );
                 return updatePaymentById(orderId, {
                     status: PaymentStatus.ISSUED,
                 });
@@ -99,11 +102,14 @@ exports.handleMidtransNotification = async (notification) => {
     } else if (transactionStatus === "settlement") {
         // TODO set transaction status on your database to 'success'
         // and response with 200 OK
-        const transaction = await paymentRepo.getPaymentById(orderId);
+        const transaction = await getPaymentById(orderId);
 
         if (transaction.status !== PaymentStatus.ISSUED) {
-            // buat invoice nya trus update data payment
-            // await createPaymentInvoice(transaction);
+            await createNotificationByPaymentStatus(
+                orderId,
+                transaction.userId,
+                PaymentStatus.ISSUED
+            );
             return updatePaymentById(orderId, {
                 status: PaymentStatus.ISSUED,
             });
@@ -115,7 +121,14 @@ exports.handleMidtransNotification = async (notification) => {
     ) {
         // TODO set transaction status on your database to 'failure'
         // and response with 200 OK
+        const transaction = await getPaymentById(orderId);
+
         if (transaction.status !== PaymentStatus.CANCELLED) {
+            await createNotificationByPaymentStatus(
+                orderId,
+                transaction.userId,
+                PaymentStatus.CANCELLED
+            );
             return updatePaymentById(orderId, {
                 status: PaymentStatus.CANCELLED,
             });
@@ -123,18 +136,58 @@ exports.handleMidtransNotification = async (notification) => {
     } else if (transactionStatus === "pending") {
         // TODO set transaction status on your database to 'pending' / waiting payment
         // and response with 200 OK
-        return updatePaymentById(orderId, {
-            status: PaymentStatus.UNPAID,
-        });
+        const transaction = await getPaymentById(orderId);
+
+        if (transaction.status !== PaymentStatus.UNPAID) {
+            await createNotificationByPaymentStatus(
+                orderId,
+                transaction.userId,
+                PaymentStatus.UNPAID
+            );
+            return updatePaymentById(orderId, {
+                status: PaymentStatus.UNPAID,
+            });
+        }
     }
     return null;
 };
 
+const createNotificationByPaymentStatus = async (
+    orderId,
+    userId,
+    updatedStatus
+) => {
+    const relatedBookings = await getBookingByUserIdAndPaymentId(userId, orderId);
+    let notifMessage;
+
+    if (relatedBookings.length > 0) {
+        const bookingId = relatedBookings[0].id;
+
+        switch (updatedStatus) {
+            case PaymentStatus.ISSUED:
+                notifMessage = `Data payment anda telah ber-status ${updatedStatus}. Nikmati perjalanan anda!`;
+                break;
+            case PaymentStatus.UNPAID:
+                notifMessage = `Data payment anda masih ber-status ${updatedStatus}. Segera selesaikan pembayaran anda!`;
+                break;
+            default:
+                notifMessage = `Pembayaran anda telah di ${updatedStatus}!`;
+                break;
+        }
+        await createNotification({
+            id: uuidv4(),
+            userId,
+            bookingId,
+            title: "Payment",
+            message: notifMessage,
+            statusRead: false,
+        });
+    }
+};
+
 const createPaymentInvoice = async (payment) => {
-    const belongingUser = await userRepo.getUserById(payment.userId);
-    const belongingBookings = await bookingRepo.getBookingsByPaymentId(
-        payment.id
-    );
+    const belongingUser = await getUserById(payment.userId);
+    const belongingBookings = await getBookingsByPaymentId(payment.id);
     const currentDate = new Date();
     const payload = {
         order_id: payment.id,
