@@ -16,7 +16,7 @@ const { authMiddleware } = require("../middlewares/auth");
 
 router.use("/auth", authRoutes);
 
-router.use("/profile", authMiddleware, profileRoutes);
+router.use("/profile", profileRoutes);
 
 router.use("/passanger", authMiddleware, passangerRoutes);
 

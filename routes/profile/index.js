@@ -1,8 +1,10 @@
 const router = require("express").Router();
 const profileController = require("../../controllers/profile");
+const { authMiddleware } = require("../../middlewares/auth");
 
 router
     .route("/id/:id")
+    .all(authMiddleware)
     .get(profileController.getProfileById)
     .patch(profileController.updateProfileById)
     .delete(profileController.deleteProfileById);

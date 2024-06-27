@@ -1,5 +1,6 @@
 const bookingUsecase = require("../../usecases/booking/index");
 const isUUID = require("../../helpers/isUUID");
+const { createAutomaticNotification } = require("../../controllers/notification/index")
 
 exports.getBookings = async (req, res, next) => {
     try {
@@ -60,8 +61,10 @@ exports.createBooking = async (req, res, next) => {
 
         const data = await bookingUsecase.createBooking(payload);
 
+        await createAutomaticNotification("Booking", `Data booking anda telah tersimpan dengan kode booking ${data.bookingCode}`,payload.userId, data.id);
+
         res.status(201).json({
-            message: "Successs",
+            message: "Success",
             data,
         });
     } catch (error) {
