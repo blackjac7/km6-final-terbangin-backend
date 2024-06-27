@@ -32,6 +32,12 @@ exports.getHelperBookingBySeatId = async (seatId) => {
     return data;
 };
 
+exports.getHelperBookingByUserId = async (userId,value) => {
+  const data = await helperBookingRepo.getHelperBookingByUserId(userId,value);
+
+  return data;
+};
+
 exports.updateHelperBooking = async (payload, id) => {
     const data = await helperBookingRepo.updateHelperBooking(payload, id);
 
