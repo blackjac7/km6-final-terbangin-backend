@@ -42,5 +42,9 @@ module.exports = {
       "Bookings",
       "fk-to-bookings-paymentId"
     );
+    await queryInterface.removeConstraint(
+      "Bookings",
+      "fk-to-bookings-roundtripFlightId"
+    );
   },
 };

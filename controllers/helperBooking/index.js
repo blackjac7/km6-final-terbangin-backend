@@ -155,6 +155,34 @@ exports.getHelperBookingBySeatId = async (req, res, next) => {
         next(error);
     }
 };
+exports.getHelperBookingByUserId = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    let { value } = req.query;
+    if (value == undefined) {
+        value = ""
+    }
+
+    if (!userId || !isUUID(userId)) {
+      throw {
+        statusCode: 400,
+        message: "userId must be a valid UUID",
+      };
+    }
+
+    const data = await helperBookingUsecase.getHelperBookingByUserId(
+      userId,
+      value.toUpperCase()
+    );
+
+    res.json({
+      data,
+      message: `Helper booking found`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 exports.updateHelperBooking = async (req, res, next) => {
     try {
