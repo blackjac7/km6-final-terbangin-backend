@@ -59,6 +59,9 @@ module.exports = (sequelize, DataTypes) => {
             issuingCountry: {
                 type: DataTypes.STRING,
             },
+            identityIdExpired: {
+                type: DataTypes.DATE,
+            },
             deletedAt: {
                 type: DataTypes.DATE,
             },
