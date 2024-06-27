@@ -1,4 +1,11 @@
-const { HelperBookings, Passangers, Seats, Bookings } = require("../../models");
+const {
+    HelperBookings,
+    Passangers,
+    Seats,
+    Bookings,
+    Flights,
+    Payments,
+} = require("../../models");
 const { v4: uuidv4 } = require("uuid");
 
 exports.createHelperBooking = async (payload) => {
@@ -22,7 +29,17 @@ exports.createHelperBooking = async (payload) => {
 
 exports.getHelperBookingById = async (id) => {
     const opt = {
-        include: [Passangers, Seats, Bookings],
+        include: [
+            Passangers,
+            {
+                model: Seats,
+                include: [Flights],
+            },
+            {
+                model: Bookings,
+                include: [Payments],
+            },
+        ],
     };
 
     const data = await HelperBookings.findByPk(id, opt);
@@ -42,7 +59,17 @@ exports.getHelperBookingByPassangerId = async (passangerId) => {
         where: {
             passangerId,
         },
-        include: [Passangers, Seats, Bookings],
+        include: [
+            Passangers,
+            {
+                model: Seats,
+                include: [Flights],
+            },
+            {
+                model: Bookings,
+                include: [Payments],
+            },
+        ],
     };
 
     const data = await HelperBookings.findAll(opt);
@@ -62,7 +89,17 @@ exports.getHelperBookingByBookingId = async (bookingId) => {
         where: {
             bookingId,
         },
-        include: [Passangers, Seats, Bookings],
+        include: [
+            Passangers,
+            {
+                model: Seats,
+                include: [Flights],
+            },
+            {
+                model: Bookings,
+                include: [Payments],
+            },
+        ],
     };
 
     const data = await HelperBookings.findAll(opt);
@@ -82,7 +119,17 @@ exports.getHelperBookingBySeatId = async (seatId) => {
         where: {
             seatId,
         },
-        include: [Passangers, Seats, Bookings],
+        include: [
+            Passangers,
+            {
+                model: Seats,
+                include: [Flights],
+            },
+            {
+                model: Bookings,
+                include: [Payments],
+            },
+        ],
     };
 
     const data = await HelperBookings.findAll(opt);

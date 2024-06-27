@@ -46,7 +46,7 @@ exports.getBookingsByPaymentId = async (paymentId) => {
 
 exports.createBooking = async (payload) => {
     const id = uuidv4();
-    const bookingCode = `${id.slice(id.length - 6).toUpperCase()}`;
+    const bookingCode = `${id.slice(id.length - 9).toUpperCase()}`;
     payload = {
         id,
         bookingCode,
