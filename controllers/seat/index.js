@@ -28,7 +28,7 @@ exports.getSeatbyId = async (req, res, next) => {
     if (!data) {
       return next({
         message: `Seat with id ${id} is not found!`,
-        statusCode: 400,
+        statusCode: 404,
       });
     }
 
@@ -48,7 +48,7 @@ exports.getSeatbyFlight = async (req, res, next) => {
     if (!data) {
       return next({
         message: `Seat with ticket-id:${id} is not found!`,
-        statusCode: 400,
+        statusCode: 404,
       });
     }
 
