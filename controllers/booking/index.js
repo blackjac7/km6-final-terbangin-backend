@@ -61,7 +61,7 @@ exports.createBooking = async (req, res, next) => {
 
         const data = await bookingUsecase.createBooking(payload);
 
-        await createAutomaticNotification("Booking", `Data booking anda telah tersimpan dengan kode booking ${data.bookingCode}`,payload.userId, data.id);
+        await createAutomaticNotification("Booking", `Data booking anda telah tersimpan dengan kode booking ${data.bookingCode}. Status pembayaran anda masih berstatus UNPAID, tolong segera selesaikan pembayaran anda`,payload.userId, data.id);
 
         res.status(201).json({
             message: "Success",
