@@ -58,6 +58,25 @@ exports.updateNotificationsByUserId = async (userId, payload) => {
   return data;
 };
 
+exports.updateNotificationByUserIdAndBookingId = async (
+    userId,
+    bookingId,
+    payload
+) => {
+    const updateCount = await Notifications.update(payload, {
+        where: { userId, bookingId },
+    });
+    if (updateCount > 0) {
+        return Notifications.findOne({
+            where: {
+                userId,
+                bookingId,
+            },
+        });
+    }
+    return null;
+};
+
 exports.readNotification = async (id) => {
   await Notifications.update(
     { statusRead: true },

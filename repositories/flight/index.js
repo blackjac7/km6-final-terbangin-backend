@@ -1,5 +1,5 @@
 const { Flights, Airlines, Airports } = require("../../models");
-const { Op } = require("sequelize");
+const { Op, where } = require("sequelize");
 const moment = require("moment");
 
 exports.getFlights = async () => {
@@ -83,6 +83,58 @@ exports.getFlightsbyFilter = async (
         as: "EndAirport",
         where: {
           city: end,
+        },
+      },
+    ],
+  });
+
+  if (data.length) {
+    data.forEach((flight) => {
+      flight.dataValues.departureAt = moment(
+        flight.dataValues.departureAt
+      ).format("YYYY-MM-DD HH:mm:ss");
+      flight.dataValues.arrivalAt = moment(flight.dataValues.arrivalAt).format(
+        "YYYY-MM-DD HH:mm:ss"
+      );
+    });
+    return data;
+  }
+  return null;
+};
+
+exports.getFlightsbyContinent = async (key, value, continent) => {
+  let whereClause = {};
+
+  whereClause['capacityEconomy'] = {
+    [Op.not]: 0,
+  };
+
+  if (key && value) {
+    if (key === "departureAt") {
+      const startDate = moment(value).startOf("day").toDate();
+      whereClause[key] = { [Op.gte]: startDate };
+    } else {
+      whereClause[key] = value;
+    }
+  }
+
+  const data = await Flights.findAll({
+    order: [["priceEconomy", "ASC"]],
+    limit:4,
+    where: whereClause,
+    include: [
+      {
+        model: Airlines,
+      },
+      {
+        model: Airports,
+        as: "StartAirport",
+      },
+      {
+        model: Airports,
+        as: "EndAirport",
+        where: {
+          continent: continent,
         },
       },
     ],
