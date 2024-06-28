@@ -2,8 +2,11 @@ const express = require("express");
 const router = express.Router();
 const flightController = require("../../controllers/flight");
 
-router.patch("/decrementcapacity/:id", flightController.decrementFlightCapacity);
-router.get("/flightfilter", flightController.getFlightsbyFilter)
+router.patch(
+  "/decrementcapacity/:id",
+  flightController.decrementFlightCapacity
+);
+router.get("/flightfilter", flightController.getFlightsbyFilter);
 
 router
   .route("/")
@@ -16,5 +19,6 @@ router
   .put(flightController.updateFlight)
   .delete(flightController.deleteFlight);
 
+router.route("/continent").get(flightController.getFlightsbyContinent);
 
 module.exports = router;

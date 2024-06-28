@@ -31,6 +31,11 @@ exports.getFlightbyId = async (id) => {
   return data;
 };
 
+exports.getFlightsbyContinent = async (key, value, continent) => {
+  const data = await flightsRepo.getFlightsbyContinent(key, value, continent);
+  return data;
+};
+
 exports.createFlight = async (payload) => {
   const data = await flightsRepo.createFlight(payload);
   return data;

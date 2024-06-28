@@ -8,6 +8,7 @@ const {
 } = require("../../repositories/user");
 
 const { getGoogleAccessTokenData } = require("../../repositories/user/login");
+const { v4: uuidv4 } = require("uuid");
 
 const { createToken } = require("../../helpers/createToken");
 
@@ -83,7 +84,7 @@ exports.googleLogin = async (accessToken) => {
         user = await createUser({
             email: googleData?.email,
             password: "",
-            phoneNumber: "",
+            phoneNumber: googleData?.phoneNumber || `NOT_PROVIDED_${uuidv4()}`,
             fullName: googleData?.name,
             picture: googleData?.picture,
         });

@@ -1,10 +1,51 @@
 const flightusecase = require("../../usecases/flight/index");
 const { v4: uuidv4 } = require("uuid");
 const isUUID = require("../../helpers/isUUID");
+const lodash = require("lodash");
 
 exports.getFlights = async (req, res, next) => {
   try {
     const data = await flightusecase.getFlights();
+
+    res.status(200).json({
+      message: "Successs",
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getFlightsbyContinent = async (req, res, next) => {
+  try {
+    let { value, continent } = req.query;
+    key = "departureAt"
+
+    if (!value || value == "") {
+      return next({
+        message: "value departure At cannot be empty",
+        statusCode: 400,
+      });
+    }
+    if (!continent || continent == "") {
+      return next({
+        message: "continent cannot be empty",
+        statusCode: 400,
+      });
+    }
+
+    const data = await flightusecase.getFlightsbyContinent(
+      key,
+      value,
+      lodash.startCase(lodash.toLower(continent))
+    );
+
+    if (!data) {
+      return next({
+        message: `Flight is not found!`,
+        statusCode: 400,
+      });
+    }
 
     res.status(200).json({
       message: "Successs",
