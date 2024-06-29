@@ -18,5 +18,10 @@ router.post(
     "/midtrans/notification",
     midtransController.handleMidtransNotification
 );
+router.get(
+    "/midtrans/invoice",
+    authMiddleware,
+    midtransController.getPaymentInvoice
+);
 
 module.exports = router;

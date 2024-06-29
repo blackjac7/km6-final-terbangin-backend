@@ -8,6 +8,10 @@ exports.getPaymentsByUserId = async (userId) => {
     return Payments.findAll({ where: { userId } });
 };
 
+exports.getPaymentBySnapToken = async (snapToken) => {
+    return Payments.findOne({ where: { snapToken } });
+};
+
 exports.addPayment = async (payload) => {
     return Payments.create(payload);
 };

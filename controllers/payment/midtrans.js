@@ -13,3 +13,22 @@ exports.handleMidtransNotification = async (req, res, next) => {
         next(e);
     }
 };
+
+exports.getPaymentInvoice = async (req, res, next) => {
+    try {
+        const { snapToken } = req?.query;
+        const user = req?.user;
+        const data = await midtransUsecase.getPaymentInvoice({
+            snapToken,
+            user,
+        });
+        const { invoiceLink } = data;
+
+        return res.status(200).json({
+            data: { invoiceLink },
+            message: null,
+        });
+    } catch (e) {
+        next(e);
+    }
+};

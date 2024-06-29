@@ -1,7 +1,10 @@
 const axios = require("axios");
 const { v4: uuidv4 } = require("uuid");
 const { getUserById } = require("../../repositories/user/index");
-const { getPaymentById } = require("../../repositories/payment/index");
+const {
+    getPaymentById,
+    getPaymentBySnapToken,
+} = require("../../repositories/payment/index");
 const {
     getBookingsByPaymentId,
     getBookingByUserIdAndPaymentId,
@@ -10,6 +13,9 @@ const { createNotification } = require("../../repositories/notification/index");
 const HttpError = require("../../utils/HttpError");
 const { PaymentStatus, Midtrans } = require("../../utils/constants");
 const { updatePaymentById } = require("../../repositories/payment/index");
+const {
+    getHelperBookingByBookingId,
+} = require("../../repositories/helperBooking");
 
 /**
  * - nge-return object dengan key token dan redirect_url
@@ -94,9 +100,11 @@ exports.handleMidtransNotification = async (notification) => {
                     transaction.userId,
                     PaymentStatus.ISSUED
                 );
-                return updatePaymentById(orderId, {
+                const updatedTransaction = await updatePaymentById(orderId, {
                     status: PaymentStatus.ISSUED,
                 });
+                await createPaymentInvoice(updatedTransaction);
+                return updatedTransaction;
             }
         }
     } else if (transactionStatus === "settlement") {
@@ -110,9 +118,11 @@ exports.handleMidtransNotification = async (notification) => {
                 transaction.userId,
                 PaymentStatus.ISSUED
             );
-            return updatePaymentById(orderId, {
+            const updatedTransaction = await updatePaymentById(orderId, {
                 status: PaymentStatus.ISSUED,
             });
+            await createPaymentInvoice(updatedTransaction);
+            return updatedTransaction;
         }
     } else if (
         transactionStatus === "cancel" ||
@@ -129,9 +139,11 @@ exports.handleMidtransNotification = async (notification) => {
                 transaction.userId,
                 PaymentStatus.CANCELLED
             );
-            return updatePaymentById(orderId, {
+            const updatedTransaction = await updatePaymentById(orderId, {
                 status: PaymentStatus.CANCELLED,
             });
+            await createPaymentInvoice(updatedTransaction);
+            return updatedTransaction;
         }
     } else if (transactionStatus === "pending") {
         // TODO set transaction status on your database to 'pending' / waiting payment
@@ -144,9 +156,11 @@ exports.handleMidtransNotification = async (notification) => {
                 transaction.userId,
                 PaymentStatus.UNPAID
             );
-            return updatePaymentById(orderId, {
+            const updatedTransaction = await updatePaymentById(orderId, {
                 status: PaymentStatus.UNPAID,
             });
+            await createPaymentInvoice(updatedTransaction);
+            return updatedTransaction;
         }
     }
     return null;
@@ -157,7 +171,10 @@ const createNotificationByPaymentStatus = async (
     userId,
     updatedStatus
 ) => {
-    const relatedBookings = await getBookingByUserIdAndPaymentId(userId, orderId);
+    const relatedBookings = await getBookingByUserIdAndPaymentId(
+        userId,
+        orderId
+    );
     let notifMessage;
 
     if (relatedBookings.length > 0) {
@@ -189,25 +206,20 @@ const createPaymentInvoice = async (payment) => {
     const belongingUser = await getUserById(payment.userId);
     const belongingBookings = await getBookingsByPaymentId(payment.id);
     const currentDate = new Date();
+    const nextDate = new Date();
+    nextDate.setDate(currentDate.getDate() + 1);
     const payload = {
         order_id: payment.id,
         invoice_number: uuidv4(),
-        due_date: currentDate.toISOString(),
-        invoice_date: currentDate.toISOString(),
+        due_date: nextDate,
+        invoice_date: currentDate,
         customer_details: {
             id: belongingUser.id,
             name: belongingUser.fullName,
             email: belongingUser.email,
             phone: belongingUser.phoneNumber,
         },
-        item_details: [
-            {
-                item_id: belongingBookings[0].id,
-                price: payment.totalPrice,
-                description: "some description",
-                quantity: belongingBookings.length,
-            },
-        ],
+        item_details: await getItemDetails(belongingBookings[0].id),
         notes: "invoice pembelian tiket",
         payment_type: "payment_link",
     };
@@ -226,11 +238,81 @@ const createPaymentInvoice = async (payment) => {
             }
         );
         const data = response.data;
-        // TO DO: add data invoice ke DB
+        // TO DO: add invoice link ke DB
+        await updatePaymentById(payment.id, {
+            invoiceLink: data.pdf_url,
+        });
     } catch (e) {
         throw new HttpError({
             statusCode: e.httpStatusCode,
             message: e.message,
         });
     }
+};
+
+// return array of objects
+const getItemDetails = async (bookingId) => {
+    const helperBooking = await getHelperBookingByBookingId(bookingId);
+    let itemDetails = [];
+
+    for (let item of helperBooking) {
+        if (item?.Booking?.status === "Return") {
+            // kalo flight nya round trip, push 2x
+            if (item?.Booking?.roundtripFlightId === item?.Seat?.Flight?.id) {
+                updateItemDetails(itemDetails, item, bookingId, true);
+            }
+            updateItemDetails(itemDetails, item, bookingId, false);
+        } else {
+            updateItemDetails(itemDetails, item, bookingId, false);
+        }
+    }
+    return itemDetails;
+};
+
+// update item details berdasarkan status flight nya (round trip atau one way)
+const updateItemDetails = (itemDetails, newItem, bookingId, isRoundTrip) => {
+    const airline = newItem?.Seat?.Flight?.Airline?.name;
+    const seatClass = newItem?.Seat?.airlineClass;
+    let priceByClass;
+
+    switch (seatClass) {
+        case "ECONOMY":
+            priceByClass = newItem?.Seat?.Flight?.priceEconomy;
+            break;
+        case "BUSINESS":
+            priceByClass = newItem?.Seat?.Flight?.priceBussines;
+            break;
+        default:
+            priceByClass = newItem?.Seat?.Flight?.priceFirstClass;
+            break;
+    }
+    itemDetails.push({
+        item_id: bookingId,
+        price: priceByClass,
+        description: `${
+            isRoundTrip ? "Kepulangan" : "Kepergian"
+        } > ${airline} - ${seatClass}`,
+        quantity: 1,
+    });
+};
+
+// get invoice by snap token
+exports.getPaymentInvoice = async (payload) => {
+    const { snapToken, user } = payload;
+    const data = await getPaymentBySnapToken(snapToken);
+
+    if (data.userId !== user.id) {
+        throw new HttpError({
+            statusCode: 403,
+            message: "Not allowed to access other user's payment(s)!",
+        });
+    }
+
+    if (!data) {
+        throw new HttpError({
+            statusCode: 404,
+            message: `Payment with snap token ${snapToken} does not exist!`,
+        });
+    }
+    return data;
 };
