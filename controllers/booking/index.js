@@ -1,6 +1,8 @@
 const bookingUsecase = require("../../usecases/booking/index");
 const isUUID = require("../../helpers/isUUID");
-const { createAutomaticNotification } = require("../../controllers/notification/index")
+const {
+    createAutomaticNotification,
+} = require("../../controllers/notification/index");
 
 exports.getBookings = async (req, res, next) => {
     try {
@@ -61,7 +63,17 @@ exports.createBooking = async (req, res, next) => {
 
         const data = await bookingUsecase.createBooking(payload);
 
-        await createAutomaticNotification("Booking", `Data booking anda telah tersimpan dengan kode booking ${data.bookingCode}. Status pembayaran anda masih berstatus UNPAID, tolong segera selesaikan pembayaran anda`,payload.userId, data.id);
+        await createAutomaticNotification(
+            "Booking",
+            `Data booking anda telah tersimpan dengan kode booking ${data.bookingCode}. Status pembayaran anda masih berstatus UNPAID, tolong segera selesaikan pembayaran anda`,
+            payload.userId,
+            data.id
+        );
+
+        req.io.emit("bookingNotification", {
+            message: `Data booking anda telah tersimpan dengan kode booking`,
+            bookingCode: data.bookingCode,
+        });
 
         res.status(201).json({
             message: "Success",

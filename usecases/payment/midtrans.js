@@ -10,6 +10,7 @@ const { createNotification } = require("../../repositories/notification/index");
 const HttpError = require("../../utils/HttpError");
 const { PaymentStatus, Midtrans } = require("../../utils/constants");
 const { updatePaymentById } = require("../../repositories/payment/index");
+const { io } = require("../../index");
 
 /**
  * - nge-return object dengan key token dan redirect_url
@@ -94,9 +95,16 @@ exports.handleMidtransNotification = async (notification) => {
                     transaction.userId,
                     PaymentStatus.ISSUED
                 );
-                return updatePaymentById(orderId, {
+                const updatedPayment = updatePaymentById(orderId, {
                     status: PaymentStatus.ISSUED,
                 });
+
+                io.emit("paymentSuccess", {
+                    message: `Pembayaran berhasil untuk transaksi`,
+                    order_id: orderId,
+                });
+
+                return updatedPayment;
             }
         }
     } else if (transactionStatus === "settlement") {
@@ -110,9 +118,16 @@ exports.handleMidtransNotification = async (notification) => {
                 transaction.userId,
                 PaymentStatus.ISSUED
             );
-            return updatePaymentById(orderId, {
+            const updatedPayment = updatePaymentById(orderId, {
                 status: PaymentStatus.ISSUED,
             });
+
+            io.emit("paymentSuccess", {
+                message: `Pembayaran berhasil untuk transaksi`,
+                order_id: orderId,
+            });
+
+            return updatedPayment;
         }
     } else if (
         transactionStatus === "cancel" ||
@@ -129,9 +144,17 @@ exports.handleMidtransNotification = async (notification) => {
                 transaction.userId,
                 PaymentStatus.CANCELLED
             );
-            return updatePaymentById(orderId, {
+            const updatedPayment = await updatePaymentById(orderId, {
                 status: PaymentStatus.CANCELLED,
             });
+
+            // Emit message to client
+            io.emit("paymentFailed", {
+                message: "Pembayaran gagal unutk transaksi",
+                order_id: orderId,
+            });
+
+            return updatedPayment;
         }
     } else if (transactionStatus === "pending") {
         // TODO set transaction status on your database to 'pending' / waiting payment
@@ -157,7 +180,10 @@ const createNotificationByPaymentStatus = async (
     userId,
     updatedStatus
 ) => {
-    const relatedBookings = await getBookingByUserIdAndPaymentId(userId, orderId);
+    const relatedBookings = await getBookingByUserIdAndPaymentId(
+        userId,
+        orderId
+    );
     let notifMessage;
 
     if (relatedBookings.length > 0) {
