@@ -10,6 +10,10 @@ const { createNotification } = require("../../repositories/notification/index");
 const HttpError = require("../../utils/HttpError");
 const { PaymentStatus, Midtrans } = require("../../utils/constants");
 const { updatePaymentById } = require("../../repositories/payment/index");
+const {
+    getHelperBookingByBookingId,
+} = require("../../repositories/helperBooking");
+const { updateSeat } = require("../../repositories/seat");
 
 /**
  * - nge-return object dengan key token dan redirect_url
@@ -89,11 +93,24 @@ exports.handleMidtransNotification = async (notification) => {
             const transaction = await getPaymentById(orderId);
 
             if (transaction.status !== PaymentStatus.ISSUED) {
-                await createNotificationByPaymentStatus(
+                const bookingId = await createNotificationByPaymentStatus(
                     orderId,
                     transaction.userId,
                     PaymentStatus.ISSUED
                 );
+
+                const helperBooking = await getHelperBookingByBookingId(
+                    bookingId
+                );
+
+                if (helperBooking && helperBooking.length > 0) {
+                    for (const booking of helperBooking) {
+                        await updateSeat(booking.seatId, {
+                            isAvailable: false,
+                        });
+                    }
+                }
+
                 const updatedPayment = updatePaymentById(orderId, {
                     status: PaymentStatus.ISSUED,
                 });
@@ -107,11 +124,22 @@ exports.handleMidtransNotification = async (notification) => {
         const transaction = await getPaymentById(orderId);
 
         if (transaction.status !== PaymentStatus.ISSUED) {
-            await createNotificationByPaymentStatus(
+            const bookingId = await createNotificationByPaymentStatus(
                 orderId,
                 transaction.userId,
                 PaymentStatus.ISSUED
             );
+
+            const helperBooking = await getHelperBookingByBookingId(bookingId);
+
+            if (helperBooking && helperBooking.length > 0) {
+                for (const booking of helperBooking) {
+                    await updateSeat(booking.seatId, {
+                        isAvailable: false,
+                    });
+                }
+            }
+
             const updatedPayment = updatePaymentById(orderId, {
                 status: PaymentStatus.ISSUED,
             });
@@ -183,7 +211,7 @@ const createNotificationByPaymentStatus = async (
                 notifMessage = `Pembayaran anda telah di ${updatedStatus}!`;
                 break;
         }
-        await createNotification({
+        const notif = await createNotification({
             id: uuidv4(),
             userId,
             bookingId,
@@ -191,6 +219,8 @@ const createNotificationByPaymentStatus = async (
             message: notifMessage,
             statusRead: false,
         });
+
+        return notif.bookingId;
     }
 };
 
