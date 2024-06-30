@@ -26,8 +26,8 @@ app.use(
 const server = http.createServer(app);
 const options = {
     cors: {
-        origin: "*",
-        methods: "*",
+        origin: "https://km6-final-terbangin-frontend-8ytasban9-febriansyahs-projects.vercel.app",
+        methods: ["GET", "POST"],
     },
 };
 
