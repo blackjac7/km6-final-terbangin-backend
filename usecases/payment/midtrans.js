@@ -10,7 +10,6 @@ const { createNotification } = require("../../repositories/notification/index");
 const HttpError = require("../../utils/HttpError");
 const { PaymentStatus, Midtrans } = require("../../utils/constants");
 const { updatePaymentById } = require("../../repositories/payment/index");
-const { io } = require("../../index");
 
 /**
  * - nge-return object dengan key token dan redirect_url
@@ -99,11 +98,6 @@ exports.handleMidtransNotification = async (notification) => {
                     status: PaymentStatus.ISSUED,
                 });
 
-                io.emit("paymentSuccess", {
-                    message: `Pembayaran berhasil untuk transaksi`,
-                    order_id: orderId,
-                });
-
                 return updatedPayment;
             }
         }
@@ -120,11 +114,6 @@ exports.handleMidtransNotification = async (notification) => {
             );
             const updatedPayment = updatePaymentById(orderId, {
                 status: PaymentStatus.ISSUED,
-            });
-
-            io.emit("paymentSuccess", {
-                message: `Pembayaran berhasil untuk transaksi`,
-                order_id: orderId,
             });
 
             return updatedPayment;
@@ -146,12 +135,6 @@ exports.handleMidtransNotification = async (notification) => {
             );
             const updatedPayment = await updatePaymentById(orderId, {
                 status: PaymentStatus.CANCELLED,
-            });
-
-            // Emit message to client
-            io.emit("paymentFailed", {
-                message: "Pembayaran gagal unutk transaksi",
-                order_id: orderId,
             });
 
             return updatedPayment;

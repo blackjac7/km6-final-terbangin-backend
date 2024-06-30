@@ -5,6 +5,18 @@ exports.handleMidtransNotification = async (req, res, next) => {
         const payload = req?.body;
         const data = await midtransUsecase.handleMidtransNotification(payload);
 
+        if (data.status === "ISSUED") {
+            req.io.emit("paymentSuccess", {
+                message: `Pembayaran berhasil dibayar sebesar`,
+                totalPrice: `Rp ${data.totalPrice}`,
+            });
+        } else if (data.status === "CANCELLED") {
+            req.io.emit("paymentFailed", {
+                message: `Pembayaran gagal untuk transaksi`,
+                totalPrice: `Rp ${data.totalPrice}`,
+            });
+        }
+
         return res.status(200).json({
             data,
             message: null,
