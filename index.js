@@ -4,7 +4,7 @@ const express = require("express");
 const fileUpload = require("express-fileupload");
 const cors = require("cors");
 const router = require("./routes");
-const http = require("http");
+const { createServer } = require("http");
 const { Server } = require("socket.io");
 
 const app = express();
@@ -23,7 +23,7 @@ app.use(
     })
 );
 
-const server = http.createServer(app);
+const httpServer = createServer(app);
 const options = {
     cors: {
         origin: "*",
@@ -31,7 +31,7 @@ const options = {
     },
 };
 
-const io = new Server(server, options);
+const io = new Server(httpServer, options);
 
 app.use(async function (req, res, next) {
     req.io = io;
@@ -75,7 +75,7 @@ io.on("connection", (socket) => {
     });
 });
 
-server.listen(PORT, () => {
+httpServer.listen(PORT, () => {
     console.log(`Listening on http://localhost:${PORT}`);
 });
 
