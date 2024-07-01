@@ -11,12 +11,13 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-const sendEmail = async ({ to, subject, html }) => {
+const sendEmail = async ({ to, subject, html, attachments = [] }) => {
     const mailOptions = {
         from: process.env.EMAIL_FROM,
         to,
         subject,
         html,
+        attachments, // Menambahkan attachments pada opsi mail
     };
     await transporter.sendMail(mailOptions);
 };

@@ -72,7 +72,11 @@ exports.createBooking = async (req, res, next) => {
 
         req.io.emit("bookingNotification", {
             message: `Data booking anda telah tersimpan dengan kode booking`,
-            bookingCode: data.bookingCode,
+            highlight: data.bookingCode,
+        });
+
+        req.io.emit("notificationUpdate", {
+            message: "Notification Update",
         });
 
         res.status(201).json({
@@ -126,6 +130,23 @@ exports.deleteBooking = async (req, res, next) => {
 
         res.status(200).json({
             message: "Successs",
+            data,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.generateFlightTicket = async (req, res, next) => {
+    try {
+        const { email, bookingId } = req?.body;
+        const data = await bookingUsecase.generateFlightTicket(
+            email,
+            bookingId
+        );
+
+        res.status(200).json({
+            message: "Successs send email ticket",
             data,
         });
     } catch (error) {
