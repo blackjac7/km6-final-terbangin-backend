@@ -148,6 +148,12 @@ exports.updateSeat = async (req, res, next) => {
             isAvailable,
         });
 
+        if (isAvailable == false || isAvailable == true) {
+            req.io.emit("seatsUpdate", {
+                message: "Seats Update",
+            });
+        }
+
         res.status(201).json({
             message: "Successs",
             data,
