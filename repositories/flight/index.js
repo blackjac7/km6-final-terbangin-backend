@@ -180,16 +180,28 @@ exports.createFlight = async (payload) => {
 };
 
 exports.decrementFlightCapacity = async (seatclass, value, id) => {
+  let kelas = "";
+  switch (seatclass) {
+    case "FIRST_CLASS":
+      kelas = "FirstClass";
+      break;
+    case "BUSINESS":
+      kelas = "Bussines";
+      break;
+    default:
+    kelas = "Economy";
+  }
+
   const flight = await Flights.findOne({
     where: { id: id },
-    attributes: ["capacity" + seatclass],
+    attributes: ["capacity" + kelas],
   });
 
   if (!flight) {
     throw new Error(`Flight dengan ID ${id} tidak ditemukan.`);
   }
 
-  const currentCapacity = flight["capacity" + seatclass];
+  const currentCapacity = flight["capacity" + kelas];
   if (currentCapacity < value) {
     throw new Error(
       `Tidak bisa mengurangi kapasitas sebanyak ${value} karena hanya ada ${currentCapacity} kursi yang tersedia.`
@@ -197,7 +209,7 @@ exports.decrementFlightCapacity = async (seatclass, value, id) => {
   }
 
   await Flights.increment(
-    { ["capacity" + seatclass]: -value },
+    { ["capacity" + kelas]: -value },
     { where: { id: id } }
   );
 

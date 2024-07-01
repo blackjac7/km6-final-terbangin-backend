@@ -43,7 +43,7 @@ exports.getFlightsbyContinent = async (req, res, next) => {
     if (!data) {
       return next({
         message: `Flight is not found!`,
-        statusCode: 400,
+        statusCode: 404,
       });
     }
 
@@ -138,7 +138,7 @@ exports.getFlightsbyFilter = async (req, res, next) => {
     if (!data) {
       return next({
         message: `Flight is not found!`,
-        statusCode: 400,
+        statusCode: 404,
       });
     }
 

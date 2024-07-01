@@ -16,21 +16,21 @@ exports.getSeats = async (req, res, next) => {
 };
 
 exports.getSeatbyId = async (req, res, next) => {
-    try {
-        const { id } = req.params;
-        if (!isUUID(id)) {
-            return next({
-                statusCode: 400,
-                message: "userId must be a valid UUID",
-            });
-        }
-        const data = await seatUsecase.getSeatbyId(id);
-        if (!data) {
-            return next({
-                message: `Seat with id ${id} is not found!`,
-                statusCode: 400,
-            });
-        }
+  try {
+    const { id } = req.params;
+    if (!isUUID(id)) {
+      return next({
+        statusCode: 400,
+        message: "userId must be a valid UUID",
+      });
+    }
+    const data = await seatUsecase.getSeatbyId(id);
+    if (!data) {
+      return next({
+        message: `Seat with id ${id} is not found!`,
+        statusCode: 404,
+      });
+    }
 
         res.status(200).json({
             message: "Successs",
@@ -42,15 +42,15 @@ exports.getSeatbyId = async (req, res, next) => {
 };
 
 exports.getSeatbyFlight = async (req, res, next) => {
-    try {
-        const { id } = req.params;
-        const data = await seatUsecase.getSeatbyFlight(id);
-        if (!data) {
-            return next({
-                message: `Seat with ticket-id:${id} is not found!`,
-                statusCode: 400,
-            });
-        }
+  try {
+    const { id } = req.params;
+    const data = await seatUsecase.getSeatbyFlight(id);
+    if (!data) {
+      return next({
+        message: `Seat with ticket-id:${id} is not found!`,
+        statusCode: 404,
+      });
+    }
 
         res.status(200).json({
             message: "Successs",

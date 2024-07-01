@@ -1,6 +1,6 @@
 exports.emailTemplate = (data) => {
-    if (!data.flightReturnAirportCode) {
-        return `<!DOCTYPE html>
+  if (!data.flightReturnAirportCode) {
+    return `<!DOCTYPE html>
 <html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
 
 <head>
@@ -169,7 +169,7 @@ exports.emailTemplate = (data) => {
 														<tr>
 															<td class="pad" style="padding-bottom:25px;padding-left:10px;padding-right:10px;padding-top:10px;">
 																<div style="color:#1678ac;font-family:Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;font-size:16px;line-height:120%;text-align:center;mso-line-height-alt:19.2px;">
-																	<p style="margin: 0; word-break: break-word;"><strong>FLIGHT CONFIRMATION & RECEIPT</strong></p>
+																	<p style="margin: 0; word-break: break-word;"><strong>FLIGHT CONFIRMATION</strong></p>
 																</div>
 															</td>
 														</tr>
@@ -755,8 +755,8 @@ exports.emailTemplate = (data) => {
 </body>
 
 </html>`;
-    } else {
-        return `<!DOCTYPE html>
+  } else {
+    return `<!DOCTYPE html>
 <html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
 
 <head>
@@ -1752,5 +1752,5 @@ exports.emailTemplate = (data) => {
 </body>
 
 </html>`;
-    }
+  }
 };
