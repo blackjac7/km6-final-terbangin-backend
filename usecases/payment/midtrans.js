@@ -111,7 +111,7 @@ exports.handleMidtransNotification = async (notification) => {
                     }
                 }
 
-                const updatedPayment = updatePaymentById(orderId, {
+                const updatedPayment = await updatePaymentById(orderId, {
                     status: PaymentStatus.ISSUED,
                 });
 
@@ -140,7 +140,7 @@ exports.handleMidtransNotification = async (notification) => {
                 }
             }
 
-            const updatedPayment = updatePaymentById(orderId, {
+            const updatedPayment = await updatePaymentById(orderId, {
                 status: PaymentStatus.ISSUED,
             });
 

@@ -78,32 +78,33 @@ exports.generateFlightTicket = async (email, bookingId) => {
     let userBooking = {
         bookingCode: booking[0].bookingCode,
         class: airlineClass,
-        flightDepartureCode: flightDeparturePlain.flightCode,
-        flightDepartureAirportCode: flightDeparturePlain.StartAirport.iataCode,
-        flightDepartureAirportCode2: flightDeparturePlain.EndAirport.iataCode,
-        flightDepartureAirportName: flightDeparturePlain.StartAirport.name,
-        flightDepartureAirportName2: flightDeparturePlain.EndAirport.name,
-        flightDepartureCity: flightDeparturePlain.StartAirport.city,
-        flightDepartureCity2: flightDeparturePlain.EndAirport.city,
-        departureDuration: formatDuration(flightDeparturePlain.duration),
+        flightDepartureCode: flightDeparturePlain?.flightCode,
+        flightDepartureAirportCode:
+            flightDeparturePlain?.StartAirport?.iataCode,
+        flightDepartureAirportCode2: flightDeparturePlain?.EndAirport?.iataCode,
+        flightDepartureAirportName: flightDeparturePlain?.StartAirport?.name,
+        flightDepartureAirportName2: flightDeparturePlain?.EndAirport?.name,
+        flightDepartureCity: flightDeparturePlain?.StartAirport?.city,
+        flightDepartureCity2: flightDeparturePlain?.EndAirport?.city,
+        departureDuration: formatDuration(flightDeparturePlain?.duration),
         departureTime: formatTime(
-            flightDeparturePlain.departureAt,
-            flightDeparturePlain.StartAirport.timezone
+            flightDeparturePlain?.departureAt,
+            flightDeparturePlain?.StartAirport?.timezone
         ),
-        departureTerminal: flightDeparturePlain.StartAirport.terminal,
-        flightReturnCode: flightReturnPlain.flightCode,
-        flightReturnAirportCode: flightReturnPlain.EndAirport.iataCode,
-        flightReturnAirportCode2: flightReturnPlain.StartAirport.iataCode,
-        flightReturnAirportName: flightReturnPlain.EndAirport.name,
-        flightReturnAirportName2: flightReturnPlain.StartAirport.name,
-        flightReturnCity: flightReturnPlain.StartAirport.city,
-        flightReturnCity2: flightReturnPlain.EndAirport.city,
-        returnDuration: formatDuration(flightReturnPlain.duration),
+        departureTerminal: flightDeparturePlain?.StartAirport?.terminal,
+        flightReturnCode: flightReturnPlain?.flightCode,
+        flightReturnAirportCode: flightReturnPlain?.EndAirport?.iataCode,
+        flightReturnAirportCode2: flightReturnPlain?.StartAirport?.iataCode,
+        flightReturnAirportName: flightReturnPlain?.EndAirport?.name,
+        flightReturnAirportName2: flightReturnPlain?.StartAirport?.name,
+        flightReturnCity: flightReturnPlain?.StartAirport?.city,
+        flightReturnCity2: flightReturnPlain?.EndAirport?.city,
+        returnDuration: formatDuration(flightReturnPlain?.duration),
         returnTime: formatTime(
-            flightReturnPlain.departureAt,
-            flightReturnPlain.StartAirport.timezone
+            flightReturnPlain?.departureAt,
+            flightReturnPlain?.StartAirport.timezone
         ),
-        returnTerminal: flightReturnPlain.StartAirport.terminal,
+        returnTerminal: flightReturnPlain?.StartAirport?.terminal,
     };
     const html = template.emailTemplate(userBooking);
 
