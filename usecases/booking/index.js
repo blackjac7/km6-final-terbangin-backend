@@ -5,7 +5,7 @@ const {
 } = require("../../repositories/helperBooking");
 const sendEmail = require("../../config/emailConfig");
 const template = require("../../helpers/templateTicket");
-const puppeteer = require("puppeteer");
+// const puppeteer = require("puppeteer");
 const moment = require("moment-timezone");
 
 exports.getBookings = async () => {
@@ -108,11 +108,11 @@ exports.generateFlightTicket = async (email, bookingId) => {
     };
     const html = template.emailTemplate(userBooking);
 
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    await page.setContent(html);
-    const pdfBuffer = await page.pdf({ format: "A4" });
-    await browser.close();
+    // const browser = await puppeteer.launch();
+    // const page = await browser.newPage();
+    // await page.setContent(html);
+    // const pdfBuffer = await page.pdf({ format: "A4" });
+    // await browser.close();
 
     await sendEmail({
         to: email,

@@ -111,11 +111,9 @@ exports.handleMidtransNotification = async (notification) => {
                     }
                 }
 
-                const updatedPayment = await updatePaymentById(orderId, {
+                return updatePaymentById(orderId, {
                     status: PaymentStatus.ISSUED,
                 });
-
-                return updatedPayment;
             }
         }
     } else if (transactionStatus === "settlement") {
@@ -140,11 +138,9 @@ exports.handleMidtransNotification = async (notification) => {
                 }
             }
 
-            const updatedPayment = await updatePaymentById(orderId, {
+            return updatePaymentById(orderId, {
                 status: PaymentStatus.ISSUED,
             });
-
-            return updatedPayment;
         }
     } else if (
         transactionStatus === "cancel" ||
