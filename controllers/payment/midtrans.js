@@ -23,6 +23,9 @@ exports.handleMidtransNotification = async (req, res, next) => {
                 message: `Pembayaran gagal untuk transaksi`,
                 highlight: `Rp ${data.totalPrice}`,
             });
+            req.io.emit("seatsUpdate", {
+                message: "Seats Update",
+            });
         }
 
         req.io.emit("notificationUpdate", {
