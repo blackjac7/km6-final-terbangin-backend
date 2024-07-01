@@ -77,7 +77,7 @@ exports.getPaymentStatusFromTransactionStatus = (transactionStatus) => {
 };
 
 // method yg dijalanin sama midtrans setelah pembayaran
-exports.handleMidtransNotification = async (notification) => {
+exports.handleMidtransNotification = async (notification, req) => {
     const orderId = notification.order_id; // sama aja kayak payment ID
     const transactionStatus = notification.transaction_status;
     const fraudStatus = notification.fraud_status;
@@ -109,6 +109,14 @@ exports.handleMidtransNotification = async (notification) => {
                             isAvailable: false,
                         });
                     }
+                    req.io.emit("paymentSuccess", {
+                        message: `Pembayaran berhasil dibayar sebesar`,
+                        highlight: `Rp ${helperBooking[0].Booking.Payment.totalPrice}`,
+                    });
+
+                    req.io.emit("seatsUpdate", {
+                        message: "Seats Update",
+                    });
                 }
 
                 return updatePaymentById(orderId, {
@@ -136,6 +144,14 @@ exports.handleMidtransNotification = async (notification) => {
                         isAvailable: false,
                     });
                 }
+                req.io.emit("paymentSuccess", {
+                    message: `Pembayaran berhasil dibayar sebesar`,
+                    highlight: `Rp ${helperBooking[0].Booking.Payment.totalPrice}`,
+                });
+
+                req.io.emit("seatsUpdate", {
+                    message: "Seats Update",
+                });
             }
 
             return updatePaymentById(orderId, {
