@@ -1,5 +1,6 @@
 const helperBookingUsecase = require("../../usecases/helperBooking");
 const isUUID = require("../../helpers/isUUID");
+const { updateSeat } = require("../../usecases/seat");
 
 exports.createHelperBooking = async (req, res, next) => {
     try {
@@ -52,6 +53,21 @@ exports.createHelperBooking = async (req, res, next) => {
         }
 
         const data = await helperBookingUsecase.createHelperBooking(payload);
+
+        const helperBooking =
+            await helperBookingUsecase.getHelperBookingByBookingId(
+                payload.bookingId
+            );
+
+        for (const booking of helperBooking) {
+            await updateSeat(booking.seatId, { isAvailable: false });
+        }
+
+        req.io.emit("seatsUpdate", {
+            message: "Seats Update",
+            flightId: helperBooking[0].Seat.flightId,
+            airlineClass: helperBooking[0].Seat.airlineClass,
+        });
 
         res.status(201).json({
             data,
@@ -156,32 +172,32 @@ exports.getHelperBookingBySeatId = async (req, res, next) => {
     }
 };
 exports.getHelperBookingByUserId = async (req, res, next) => {
-  try {
-    const { userId } = req.params;
-    let { value } = req.query;
-    if (value == undefined) {
-        value = ""
+    try {
+        const { userId } = req.params;
+        let { value } = req.query;
+        if (value == undefined) {
+            value = "";
+        }
+
+        if (!userId || !isUUID(userId)) {
+            throw {
+                statusCode: 400,
+                message: "userId must be a valid UUID",
+            };
+        }
+
+        const data = await helperBookingUsecase.getHelperBookingByUserId(
+            userId,
+            value.toUpperCase()
+        );
+
+        res.json({
+            data,
+            message: `Helper booking found`,
+        });
+    } catch (error) {
+        next(error);
     }
-
-    if (!userId || !isUUID(userId)) {
-      throw {
-        statusCode: 400,
-        message: "userId must be a valid UUID",
-      };
-    }
-
-    const data = await helperBookingUsecase.getHelperBookingByUserId(
-      userId,
-      value.toUpperCase()
-    );
-
-    res.json({
-      data,
-      message: `Helper booking found`,
-    });
-  } catch (error) {
-    next(error);
-  }
 };
 
 exports.updateHelperBooking = async (req, res, next) => {

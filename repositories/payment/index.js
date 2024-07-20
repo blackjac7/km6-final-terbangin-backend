@@ -24,3 +24,19 @@ exports.updatePaymentById = async (id, payload) => {
 exports.deletePaymentById = async (id) => {
     return Payments.destroy({ where: { id } });
 };
+
+exports.getPendingPayments = async () => {
+    return Payments.findAll({ where: { status: "UNPAID" } });
+};
+
+exports.updatePaymentByIdInterval = async (id, update) => {
+    const [updateCount] = await Payments.update(update, {
+        where: { id },
+        returning: true,
+    });
+
+    if (updateCount > 0) {
+        return Payments.findByPk(id);
+    }
+    return null;
+};

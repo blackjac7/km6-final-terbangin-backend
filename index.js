@@ -6,6 +6,7 @@ const cors = require("cors");
 const router = require("./routes");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
+const { checkExpiredTransactions } = require("./usecases/payment");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -74,6 +75,15 @@ io.on("connection", (socket) => {
         console.log(socket.id + " disconnected because " + reason);
     });
 });
+
+// check expired transactions every 1 minute (temporarily)
+setInterval(async () => {
+    try {
+        await checkExpiredTransactions(io);
+    } catch (error) {
+        console.error("Error checking expired transactions:", error);
+    }
+}, 60000);
 
 httpServer.listen(PORT, () => {
     console.log(`Listening on http://localhost:${PORT}`);

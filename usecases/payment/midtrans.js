@@ -36,6 +36,14 @@ exports.generateMidtransTransaction = async (payment) => {
             email: belongingUser.email,
             phone: belongingUser.phoneNumber,
         },
+        item_details: [
+            {
+                id: payment.id,
+                price: payment.totalPrice,
+                quantity: 1,
+                name: "Flight Ticket",
+            },
+        ],
     };
     // encode server key with base-64
     const authString = btoa(`${Midtrans.SERVER_KEY}:`);
@@ -53,10 +61,30 @@ exports.generateMidtransTransaction = async (payment) => {
         );
         return response.data;
     } catch (e) {
-        throw new HttpError({
-            statusCode: e.httpStatusCode,
-            message: e.message,
-        });
+        if (e.response) {
+            // Server response status code that falls out of the range of 2xx
+            console.error("Error response data:", e.response.data);
+            console.error("Error response status:", e.response.status);
+            console.error("Error response headers:", e.response.headers);
+            throw new HttpError({
+                statusCode: e.response.status,
+                message: e.response.data.message || e.message,
+            });
+        } else if (e.request) {
+            // No response was received from server
+            console.error("Error request:", e.request);
+            throw new HttpError({
+                statusCode: 500,
+                message: "No response received from Midtrans",
+            });
+        } else {
+            // Something else happened while setting up the request
+            console.error("Error message:", e.message);
+            throw new HttpError({
+                statusCode: 500,
+                message: e.message,
+            });
+        }
     }
 };
 
@@ -90,7 +118,7 @@ exports.handleMidtransNotification = async (notification, req) => {
             const transaction = await getPaymentById(orderId);
 
             if (transaction.status !== PaymentStatus.ISSUED) {
-                const bookingId = await createNotificationByPaymentStatus(
+                const bookingId = await this.createNotificationByPaymentStatus(
                     orderId,
                     transaction.userId,
                     PaymentStatus.ISSUED
@@ -140,6 +168,7 @@ exports.handleMidtransNotification = async (notification, req) => {
                             flihgtonewayId
                         );
                     }
+
                     for (const booking of helperBooking) {
                         await updateSeat(booking.seatId, {
                             isAvailable: false,
@@ -153,6 +182,8 @@ exports.handleMidtransNotification = async (notification, req) => {
 
                     req.io.emit("seatsUpdate", {
                         message: "Seats Update",
+                        flightId: helperBooking[0].Seat.flightId,
+                        airlineClass: helperBooking[0].Seat.airlineClass,
                     });
 
                     req.io.emit("paymentUpdate", {
@@ -171,7 +202,7 @@ exports.handleMidtransNotification = async (notification, req) => {
         const transaction = await getPaymentById(orderId);
 
         if (transaction.status !== PaymentStatus.ISSUED) {
-            const bookingId = await createNotificationByPaymentStatus(
+            const bookingId = await this.createNotificationByPaymentStatus(
                 orderId,
                 transaction.userId,
                 PaymentStatus.ISSUED
@@ -218,6 +249,7 @@ exports.handleMidtransNotification = async (notification, req) => {
                         flihgtonewayId
                     );
                 }
+
                 for (const booking of helperBooking) {
                     await updateSeat(booking.seatId, {
                         isAvailable: false,
@@ -231,6 +263,8 @@ exports.handleMidtransNotification = async (notification, req) => {
 
                 req.io.emit("seatsUpdate", {
                     message: "Seats Update",
+                    flightId: helperBooking[0].Seat.flightId,
+                    airlineClass: helperBooking[0].Seat.airlineClass,
                 });
 
                 req.io.emit("paymentUpdate", {
@@ -245,55 +279,132 @@ exports.handleMidtransNotification = async (notification, req) => {
     } else if (
         transactionStatus === "cancel" ||
         transactionStatus === "deny" ||
-        transactionStatus === "expire"
+        transactionStatus === "expire" ||
+        transactionStatus === "failure" ||
+        transactionStatus === "void"
     ) {
-        console.log("ini berarti expired");
         // TODO set transaction status on your database to 'failure'
         // and response with 200 OK
         const transaction = await getPaymentById(orderId);
 
         if (transaction.status !== PaymentStatus.CANCELLED) {
-            await createNotificationByPaymentStatus(
+            const bookingId = await this.createNotificationByPaymentStatus(
                 orderId,
                 transaction.userId,
                 PaymentStatus.CANCELLED
             );
-            const updatedPayment = await updatePaymentById(orderId, {
+
+            const helperBooking = await getHelperBookingByBookingId(bookingId);
+
+            if (helperBooking && helperBooking.length > 0) {
+                for (const booking of helperBooking) {
+                    await updateSeat(booking.seatId, {
+                        isAvailable: true,
+                    });
+                }
+
+                req.io.emit("seatsUpdate", {
+                    message: "Seats Update",
+                    flightId: helperBooking[0].Seat.flightId,
+                    airlineClass: helperBooking[0].Seat.airlineClass,
+                });
+
+                req.io.emit("paymentFailed", {
+                    message: `Pembayaran anda telah expired`,
+                    highlight: `Order ID ${orderId}`,
+                    userId: transaction.userId,
+                });
+
+                req.io.emit("paymentUpdate", {
+                    message: "Payment Update",
+                });
+            }
+
+            return updatePaymentById(orderId, {
                 status: PaymentStatus.CANCELLED,
             });
-
-            req.io.emit("paymentFailed", {
-                message: `Pembayaran anda telah expired`,
-                highlight: `Order ID ${orderId}`,
-                userId: transaction.userId,
-            });
-
-            req.io.emit("paymentUpdate", {
-                message: "Payment Update",
-            });
-
-            return updatedPayment;
         }
     } else if (transactionStatus === "pending") {
         // TODO set transaction status on your database to 'pending' / waiting payment
         // and response with 200 OK
         const transaction = await getPaymentById(orderId);
 
-        if (transaction.status !== PaymentStatus.UNPAID) {
-            await createNotificationByPaymentStatus(
+        if (transaction.status === PaymentStatus.UNPAID) {
+            const bookingId = await this.createNotificationByPaymentStatus(
                 orderId,
                 transaction.userId,
                 PaymentStatus.UNPAID
             );
+
+            const helperBooking = await getHelperBookingByBookingId(bookingId);
+
+            if (helperBooking && helperBooking.length > 0) {
+                for (const booking of helperBooking) {
+                    await updateSeat(booking.seatId, {
+                        isAvailable: false,
+                    });
+                }
+
+                req.io.emit("seatsUpdate", {
+                    message: "Seats Update",
+                    flightId: helperBooking[0].Seat.flightId,
+                    airlineClass: helperBooking[0].Seat.airlineClass,
+                });
+
+                req.io.emit("paymentUpdate", {
+                    message: "Payment Update",
+                });
+            }
+
             return updatePaymentById(orderId, {
                 status: PaymentStatus.UNPAID,
+            });
+        }
+    } else {
+        const transaction = await getPaymentById(orderId);
+
+        if (transaction.status !== PaymentStatus.CANCELLED) {
+            const bookingId = await this.createNotificationByPaymentStatus(
+                orderId,
+                transaction.userId,
+                PaymentStatus.CANCELLED
+            );
+
+            const helperBooking = await getHelperBookingByBookingId(bookingId);
+
+            if (helperBooking && helperBooking.length > 0) {
+                for (const booking of helperBooking) {
+                    await updateSeat(booking.seatId, {
+                        isAvailable: true,
+                    });
+                }
+
+                req.io.emit("seatsUpdate", {
+                    message: "Seats Update",
+                    flightId: helperBooking[0].Seat.flightId,
+                    airlineClass: helperBooking[0].Seat.airlineClass,
+                });
+
+                req.io.emit("paymentFailed", {
+                    message: `Pembayaran anda telah expired`,
+                    highlight: `Order ID ${orderId}`,
+                    userId: transaction.userId,
+                });
+
+                req.io.emit("paymentUpdate", {
+                    message: "Payment Update",
+                });
+            }
+
+            return updatePaymentById(orderId, {
+                status: PaymentStatus.CANCELLED,
             });
         }
     }
     return null;
 };
 
-const createNotificationByPaymentStatus = async (
+exports.createNotificationByPaymentStatus = async (
     orderId,
     userId,
     updatedStatus
@@ -309,13 +420,16 @@ const createNotificationByPaymentStatus = async (
 
         switch (updatedStatus) {
             case PaymentStatus.ISSUED:
-                notifMessage = `Data payment anda telah ber-status ${updatedStatus}. Nikmati perjalanan anda!`;
+                notifMessage = `Data payment anda dengan kode booking ${relatedBookings[0].bookingCode} telah ber-status ${updatedStatus}. Nikmati perjalanan anda!`;
                 break;
             case PaymentStatus.UNPAID:
-                notifMessage = `Data payment anda masih ber-status ${updatedStatus}. Segera selesaikan pembayaran anda!`;
+                notifMessage = `Data payment anda dengan kode booking ${relatedBookings[0].bookingCode} masih ber-status ${updatedStatus}. Segera selesaikan pembayaran anda!`;
+                break;
+            case PaymentStatus.CANCELLED:
+                notifMessage = `Pembayaran anda dengan kode booking ${relatedBookings[0].bookingCode} ber-status ${updatedStatus}!`;
                 break;
             default:
-                notifMessage = `Pembayaran anda telah di ${updatedStatus}!`;
+                notifMessage = `Pembayaran anda dengan kode booking ${relatedBookings[0].bookingCode} telah di ${updatedStatus}!`;
                 break;
         }
         const notif = await createNotification({
